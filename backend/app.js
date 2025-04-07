@@ -1,15 +1,19 @@
 const express = require("express");
-// const bodyParser = require('body-parser');
-// const cors = require('cors'); 
 const App = express();
+const {createPool} = require("mysql");
 
-// App.use(express.json());
-// App.use(cors({
-//   origin: 'http://localhost:3000',
-//   methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-//   credentials: true,
-// }));
+const pool = createPool({
+    host: "localhost",
+    user: "root",
+    password: "root",
+    database: "caretaker",
+})
 
+pool.query(`show tables`,(err,res,fields)=>{
+    if(err) throw err
+    console.log(res)
+    console.log(fields)
+})
 // Routes
 App.get('/', (req, res) => {
   res.status(200).json({ "message": "welcome to caretaker api" });

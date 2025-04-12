@@ -9,7 +9,10 @@ const {create_table_admin,
     create_table_test,
     create_table_fdo,
     create_table_room,
-create_table_deo} = require('../controllers/admin_controller');
+create_table_deo,
+populate_admins,
+
+} = require('../controllers/admin_controller');
 router.get('/create-admin',create_table_admin) ;
 router.get('/create-patient',create_table_patient) ;
 router.get('/create-appointment',create_table_appointments);
@@ -19,5 +22,5 @@ router.get('/create-test',create_table_test);
 router.get('/create-fdo',create_table_fdo);
 router.get('/create-deo',create_table_deo);
 router.get ('/create-room',create_table_room);
-router.get('/create/admins',)
+router.get('/populate',populate_admins);
 module.exports = router;

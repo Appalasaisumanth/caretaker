@@ -1,7 +1,11 @@
 const express = require("express");
 // const bodyParser = require("body-parser"); /* deprecated */
 const cors = require("cors");
-const admin_routes=require('./routes/admin')
+const admin_routes=require('./routes/admin');
+const fdo_routes=require('./routes/fdo');
+const deo_routes=require('./routes/deo');
+const doctor_routes=require('./routes/doctor');
+const patient_routes=require('./routes/patient');
 const app = express();
 
 
@@ -28,8 +32,10 @@ app.get('/connect', (req, res) => {
     });
 });
 app.use('/admin',admin_routes)
-
-
+app.use('/fdo',fdo_routes)
+app.use('/deo',deo_routes)
+app.use('/doctor',doctor_routes)
+app.use('/patient',patient_routes)
 // set port, listen for requests
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

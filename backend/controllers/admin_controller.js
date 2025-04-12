@@ -356,6 +356,224 @@ async function populate_admins(req, res) {
     }
 }
 
+function  login_admin(req,res,next)
+{
+    let {username,password}=req.body;
+    if (!username || !password)
+    {
+        return res.status(400).json({message:'username or password is null'});
+    }
+    try
+    {
+        connection.query('SELECT password FROM admin where username=?',[username],async (err,results)=>{
+       
+            if (err )
+            { console.log(err,results);
+                return res.status(400).json({message:'error in retriving data,try some other time', error:results.password});
+
+            }
+            else
+            {
+                if (results.length==0)
+                {
+                    return res.status(400).json({message:'username is invalid'});
+
+                }
+                else
+                { 
+                    if (await bcrypt.compare(password,results[0].password))
+                    {
+                    return res.status(200).json({message:"successful-login",username:username});
+                    }
+                    else
+                    {
+                        return res.status(400).json({message:'password is invalid'});
+
+                    }
+
+
+                }
+            }
+        })
+
+    }
+    catch(err)
+    {
+        console.log("Unexpected error:", err);
+        return res.status(500).json({ error: "Something went wrong" });
+    }
+    
+}
+
+
+function  register_admin(req,res,next)
+{
+    let {username,password}=req.body;
+    if (!username || !password)
+    {
+        return res.status(400).json({message:'username or password is null'});
+    }
+    try
+    {
+        connection.query('SELECT password FROM admin where username=?',[username],async (err,results)=>{
+       
+            if (err )
+            { console.log(err,results);
+                return res.status(400).json({message:'error in retriving data,try some other time', error:results.password});
+
+            }
+            else
+            {
+                if (results.length==0)
+                {
+                  let hashed_password=await bcrypt.hash(password,12);
+                    
+        connection.query('INSERT INTO ADMIN (username,password) VALUES (?,?);',[username,hashed_password],async (err,results)=>{
+       
+            if (err )
+            { console.log(err,results);
+                return res.status(400).json({message:'error in retriving data,try some other time', error:results.password});
+
+            }
+            else
+            {
+                return res.status(200).json({message:'sucessful entry'});
+            }
+        });
+                }
+                else
+                { 
+
+                    return res.status(400).json({message:'username exists try to login'});
+
+
+
+                }
+            }
+        })
+
+    }
+    catch(err)
+    {
+        console.log("Unexpected error:", err);
+        return res.status(500).json({ error: "Something went wrong" });
+    }
+    
+}
+
+function  update_admin(req,res,next)
+{
+    let {username,password}=req.body;
+    if (!username || !password)
+    {
+        return res.status(400).json({message:'username or password is null'});
+    }
+    try
+    {
+        connection.query('SELECT password FROM admin where username=?',[username],async (err,results)=>{
+       
+            if (err )
+            { console.log(err,results);
+                return res.status(400).json({message:'error in retriving data,try some other time', error:results.password});
+
+            }
+            else
+            {
+                if (results.length==0)
+                {
+                    return res.status(400).json({message:'username is invalid'});
+
+                }
+                else
+                {
+
+                    let hashed_password=await bcrypt.hash(password,12);
+                    
+                    connection.query('UPDATE admin set password=? WHERE username=?;',[hashed_password,username],async (err,results)=>{
+                   
+                        if (err )
+                        { 
+                            return res.status(400).json({message:'internal server error ,try some other time'});
+            
+                        }
+                        else
+                        {
+                            return res.status(200).json({message:'sucessful update'});
+                        }
+                    });
+
+                }
+            }
+        })
+
+    }
+    catch(err)
+    {
+        console.log("Unexpected error:", err);
+        return res.status(500).json({ error: "Something went wrong" });
+    }
+    
+}
+
+function  delete_admin(req,res,next)
+{
+    let {username}=req.params;
+    if (!username )
+    {
+        return res.status(400).json({message:'username is null'});
+    }
+    try
+    {
+        connection.query('SELECT password FROM admin where username=?',[username],async (err,results)=>{
+       
+            if (err )
+            { console.log(err,results);
+                return res.status(400).json({message:'error in retriving data,try some other time', error:results.password});
+
+            }
+            else
+            {
+                if (results.length==0)
+                {
+                    return res.status(400).json({message:'username is invalid'});
+
+                }
+                else
+                {
+                    connection.query('DELETE FROM admin  WHERE username=?;',[username],async (err,results)=>{
+                   
+                        if (err )
+                        { console.log(err,results);
+                            return res.status(400).json({message:'internal server error ,try some other time',err:err});
+            
+                        }
+                        else
+                        {
+                            return res.status(200).json({message:'sucessful delete'});
+                        }
+                    });
+
+
+                }
+            }
+        })
+
+    }
+    catch(err)
+    {
+        console.log("Unexpected error:", err);
+        return res.status(500).json({ error: "Something went wrong" });
+    }
+    
+}
+
+
+
+
+
+
+
+
 module.exports = {
     create_table_admin,
     create_table_appointments,
@@ -366,5 +584,9 @@ module.exports = {
     create_table_deo,
     create_table_fdo,
     create_table_room,
-    populate_admins
+    populate_admins,
+    login_admin,
+    register_admin,
+    update_admin,
+    delete_admin
 };

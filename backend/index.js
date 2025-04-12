@@ -1,20 +1,18 @@
 const express = require("express");
 // const bodyParser = require("body-parser"); /* deprecated */
 const cors = require("cors");
-
+const admin_routes=require('./routes/admin')
 const app = express();
 
 
 
 app.use(cors());
 
-// parse requests of content-type - application/json
-app.use(express.json()); /* bodyParser.json() is deprecated */
 
-// parse requests of content-type - application/x-www-form-urlencoded
-app.use(express.urlencoded({ extended: true })); /* bodyParser.urlencoded() is deprecated */
+app.use(express.json()); 
 
-// simple route
+app.use(express.urlencoded({ extended: true }));
+
 app.get("/", (req, res) => {
   return res.json({ message: "Welcome to caretaker application." });
 });
@@ -29,6 +27,7 @@ app.get('/connect', (req, res) => {
         return res.json({ message: "Connection built successfully", tables: results });
     });
 });
+app.use('/admin',admin_routes)
 
 
 // set port, listen for requests

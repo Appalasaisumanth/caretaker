@@ -2,5 +2,8 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "express": "^5.1.0"
+  },
+  "scripts":{
+    "start": "nodemon ap"
   }
 }

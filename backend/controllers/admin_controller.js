@@ -183,8 +183,15 @@ function create_table_appointments(req, res, next) {
               aid INT PRIMARY KEY AUTO_INCREMENT,
               pid INT,
               did INT,
-              time TIME,
-              date DATE,
+              appointment_time ENUM(
+        '10:00:00',
+        '11:00:00',
+        '12:00:00',
+        '16:00:00',
+        '17:00:00',
+        '18:00:00'
+    ),
+              appointment_date DATE,
               FOREIGN KEY (pid) REFERENCES patient(id),
               FOREIGN KEY (did) REFERENCES doctor(id)
             );

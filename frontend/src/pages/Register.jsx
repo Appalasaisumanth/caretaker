@@ -224,7 +224,6 @@ const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
     role: '',
     password: '',
     confirmPassword: '',
@@ -265,7 +264,7 @@ const Register = () => {
     setError('');
 
     // Client-side validation
-    if (!formData.name || !formData.email || !formData.role || !formData.password || !formData.confirmPassword) {
+    if (!formData.name  || !formData.role || !formData.password || !formData.confirmPassword) {
       setError('Please fill in all fields');
       setIsLoading(false);
       return;
@@ -291,8 +290,7 @@ const Register = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
+          username: formData.name,
           password: formData.password,
         }),
       });
@@ -345,18 +343,6 @@ const Register = () => {
               value={formData.name}
               onChange={handleChange}
               placeholder="Enter your full name"
-              required
-            />
-          </InputGroup>
-          <InputGroup as={motion.div} variants={fadeIn} initial="hidden" animate="visible">
-            <InputLabel htmlFor="email">Email</InputLabel>
-            <Input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Enter your email"
               required
             />
           </InputGroup>

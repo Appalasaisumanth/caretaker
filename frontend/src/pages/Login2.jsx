@@ -6,188 +6,16 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import Loader from '../assets/Loader'; // Ensure the path is correct
+import { PatientloginRoute, AdminloginRoute, DoctorloginRoute, DeologinRoute, FdologinRoute } from '../APIRoutes/APIRoutes';
 
-
+// Roles array for dropdown
 const roles = [
-  { value: 'patient', label: 'Patient', route: PatientRegisterRoute },
-  { value: 'doctor', label: 'Doctor', route: DoctorRegisterRoute },
-  { value: 'fdo', label: 'FDO', route: FdoRegisterRoute },
-  { value: 'deo', label: 'DEO', route: DeoRegisterRoute },
-  { value: 'admin', label: 'Admin', route: AdminRegisterRoute },
+  { value: 'patient', label: 'Patient', route: PatientloginRoute },
+  { value: 'doctor', label: 'Doctor', route: DoctorloginRoute },
+  { value: 'fdo', label: 'FDO', route: FdologinRoute },
+  { value: 'deo', label: 'DEO', route: DeologinRoute },
+  { value: 'admin', label: 'Admin', route: AdminloginRoute },
 ];
-
-function Login() {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({ username: '', password: '', role: 'Patient' }); // Added role with default value
-  const [message, setMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [visible, setIsVisible] = useState(false);
-
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  useEffect(() => {
-    if (message) {
-      toast(message, {
-        autoClose: 5000,
-        pauseOnHover: true,
-        closeOnClick: true,
-      });
-    }
-  }, [message]);
-
-  const submitHandler = async (event) => {
-    event.preventDefault();
-    setIsLoading(true);
-
-    if (formData.password && formData.username && formData.role) {
-      
-      const formDataToSend = { username: formData.username, password: formData.password };
-      const response = await fetch(`{}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formDataToSend),
-      });
-
-      if (response.ok) {
-        const temporary = await response.json();
-        setIsLoading(false);
-        setMessage(`Welcome, ${formData.username}! Redirecting...`);
-        localStorage.setItem('user', `${temporary.result}+${formData.username}+${formData.role}`); // Store role in localStorage
-        setTimeout(() => {
-          navigate('/dashboard');
-        }, 5000);
-      } else {
-        const temporary = await response.json();
-        setMessage(temporary.message);
-        setIsLoading(false);
-      }
-    } else {
-      setMessage('Please fill in all fields');
-      setIsLoading(false);
-    }
-  };
-
-  const visibleHandler = () => {
-    const passwordInput = document.getElementById('password');
-    passwordInput.type = visible ? 'password' : 'text';
-    setIsVisible(!visible);
-  };
-
-  return (
-    <LoginContainer>
-      <LoginBox
-        as={motion.div}
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, ease: 'easeOut' }}
-      >
-        <LoginTitle>Welcome to CarePlus</LoginTitle>
-        <Text1>
-          New to CarePlus?{' '}
-          <NavLink onClick={() => navigate('/register')}>Register</NavLink>
-        </Text1>
-        <Form onSubmit={submitHandler}>
-          <ButtonGroup>
-            <BackButton
-              as={motion.button}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => navigate('/')}
-              type="button"
-            >
-              ← Back
-            </BackButton>
-          </ButtonGroup>
-          <InputGroup>
-            <InputLabel>Username</InputLabel>
-            <Input
-              type="text"
-              id="username"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              placeholder="Enter your username"
-            />
-          </InputGroup>
-          <InputGroup>
-            <InputLabel>Password</InputLabel>
-            <InputWrapper>
-              <Input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-              />
-              <EyeIcon onClick={visibleHandler}>
-                {visible ? <FiEyeOff size={20} /> : <FiEye size={20} />}
-              </EyeIcon>
-            </InputWrapper>
-          </InputGroup>
-          <InputGroup>
-            <InputLabel>Role</InputLabel>
-            <Select
-              id="role"
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-            >
-              <option value="Patient">Patient</option>
-              <option value="Admin">Admin</option>
-              <option value="Deo">DEO</option>
-              <option value="Fdo">FDO</option>
-              <option value="Doctor"> Doctor </option>
-            </Select>
-          </InputGroup>
-          <ForgotPassword>
-            <a href="/forgot-password">Forgot Password?</a>
-          </ForgotPassword>
-          <SubmitButton
-            as={motion.button}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            type="submit"
-            disabled={isLoading}
-          >
-            {isLoading ? 'Logging In...' : 'Login'}
-          </SubmitButton>
-        </Form>
-        {isLoading && (
-          <LoaderContainer>
-            <Loader />
-          </LoaderContainer>
-        )}
-        <ToastContainer
-          position="top-center"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-          toastStyle={{
-            background: '#fff',
-            color: '#333',
-            borderRadius: '10px',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-          }}
-        />
-      </LoginBox>
-    </LoginContainer>
-  );
-}
 
 // Styled Components
 const LoginContainer = styled.div`
@@ -201,7 +29,7 @@ const LoginContainer = styled.div`
   overflow: hidden;
 `;
 
-const LoginBox = styled.div`
+const LoginBox = styled(motion.div)`
   width: min(90vw, 450px);
   padding: 3rem 2.5rem;
   background: rgba(255, 255, 255, 0.98);
@@ -259,7 +87,7 @@ const ButtonGroup = styled.div`
   margin-bottom: 1.5rem;
 `;
 
-const BackButton = styled.button`
+const BackButton = styled(motion.button)`
   font-size: 1rem;
   font-weight: 500;
   background: #f8f9fa;
@@ -280,9 +108,9 @@ const BackButton = styled.button`
 `;
 
 const InputGroup = styled(motion.div)`
-  width: 95%;
+  width: 100%;
   margin-bottom: 1.8rem;
-  padding-right: 2rem;
+  padding-right: 1.5rem;
   position: relative;
 `;
 
@@ -329,8 +157,13 @@ const Select = styled.select`
   border-radius: 12px;
   outline: none;
   background: #fff;
+  color: #333;
   transition: all 0.3s ease;
-  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1em;
 
   &:focus {
     border-color: #007bff;
@@ -371,7 +204,7 @@ const ForgotPassword = styled.div`
   }
 `;
 
-const SubmitButton = styled.button`
+const SubmitButton = styled(motion.button)`
   width: 100%;
   padding: 0.9rem;
   font-size: 1.2rem;
@@ -401,4 +234,197 @@ const LoaderContainer = styled.div`
   justify-content: center;
 `;
 
-export default Login;
+const ErrorMessage = styled.p`
+  color: #dc3545;
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+  text-align: left;
+`;
+
+// Animation Variants
+const fadeIn = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+};
+
+function Login2() {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({ username: '', password: '', role: 'patient' }); // Default role to 'patient'
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+    setError(''); // Clear error on input change
+  };
+
+  useEffect(() => {
+    if (message) {
+      toast(message, {
+        autoClose: 5000,
+        pauseOnHover: true,
+        closeOnClick: true,
+        position: 'top-center',
+        theme: 'light',
+        toastStyle: {
+          background: '#fff',
+          color: '#333',
+          borderRadius: '10px',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+        },
+      });
+    }
+  }, [message]);
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
+  const submitHandler = async (event) => {
+    event.preventDefault();
+    setIsLoading(true);
+    setError('');
+
+    if (!formData.username || !formData.password || !formData.role) {
+      setError('Please fill in all fields');
+      setIsLoading(false);
+      return;
+    }
+
+    const selectedRole = roles.find((r) => r.value === formData.role);
+    if (!selectedRole) {
+      setError('Invalid role selected');
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(selectedRole.route, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: formData.username,
+          password: formData.password,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setIsLoading(false);
+        setMessage(`Welcome, ${formData.username}! Redirecting...`);
+        localStorage.setItem('user', `${formData.username}+${formData.role}`);
+        setTimeout(() => {
+          navigate('/');
+        }, 5000);
+      } else {
+        const data = await response.json();
+        setError(data.message || 'Login failed');
+        setIsLoading(false);
+      }
+    } catch (err) {
+      setError('Something went wrong. Please try again.');
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <LoginContainer>
+      <LoginBox
+        as={motion.div}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, ease: 'easeOut' }}
+      >
+        <LoginTitle>Welcome to CarePlus</LoginTitle>
+        <Text1>
+          New to CarePlus? <NavLink onClick={() => navigate('/register')}>Register</NavLink>
+        </Text1>
+        <Form onSubmit={submitHandler}>
+          <ButtonGroup>
+            <BackButton
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate('/')}
+              type="button"
+            >
+              ← Back
+            </BackButton>
+          </ButtonGroup>
+          <InputGroup as={motion.div} variants={fadeIn} initial="hidden" animate="visible">
+            <InputLabel htmlFor="username">Username</InputLabel>
+            <Input
+              type="text"
+              id="username"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              placeholder="Enter your username"
+              required
+            />
+          </InputGroup>
+          <InputGroup as={motion.div} variants={fadeIn} initial="hidden" animate="visible">
+            <InputLabel htmlFor="role">Role</InputLabel>
+            <Select
+              id="role"
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              required
+            >
+              {roles.map((role) => (
+                <option key={role.value} value={role.value}>
+                  {role.label}
+                </option>
+              ))}
+            </Select>
+          </InputGroup>
+          <InputGroup as={motion.div} variants={fadeIn} initial="hidden" animate="visible">
+            <InputLabel htmlFor="password">Password</InputLabel>
+            <InputWrapper>
+              <Input
+                type={passwordVisible ? 'text' : 'password'}
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Enter your password"
+                required
+              />
+              <EyeIcon onClick={togglePasswordVisibility}>
+                {passwordVisible ? <FiEyeOff size={22} /> : <FiEye size={22} />}
+              </EyeIcon>
+            </InputWrapper>
+            {error && <ErrorMessage>{error}</ErrorMessage>}
+          </InputGroup>
+          <ForgotPassword>
+            <a href="/forgot_password">Forgot Password?</a>
+          </ForgotPassword>
+          <SubmitButton
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            type="submit"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Logging In...' : 'Login'}
+          </SubmitButton>
+        </Form>
+        {isLoading && (
+          <LoaderContainer>
+            <Loader />
+          </LoaderContainer>
+        )}
+        <ToastContainer />
+      </LoginBox>
+    </LoginContainer>
+  );
+}
+
+export default Login2;

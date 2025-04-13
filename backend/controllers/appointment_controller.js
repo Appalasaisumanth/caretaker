@@ -315,7 +315,7 @@ function delete_appointment(req,res,next)
 
 function update_appointment(req,res,next)
 {
-    const {aid,did,appointment_time,appointment_date,pid}=req.body;
+    const {aid,pid,did,appointment_time,appointment_date,}=req.body;
     if(!did || !appointment_date|| !appointment_time || !pid ||!aid)
     {
         return res.status(500).json({message:'all feilds must be filled,some feilds are missing'});
@@ -326,7 +326,7 @@ function update_appointment(req,res,next)
         if(err)
         {
             console.log(err);
-            return res.status(500).json({message:'error retriving data,try some other time'});
+            return res.status(500).json({message:'error retriving data,try some other time with perfect data'});
         }
         else
         {
@@ -334,7 +334,7 @@ function update_appointment(req,res,next)
             {return res.status(200).json({message:'this slot is not booked cannot be updated',});}
             else
             {
-                connection.query(`update appointment set  did=? , pid=? , appointment_time=, appointment_date=? where aid=?;`,[did,pid,appointment_time,appointment_date,aid],(err,result)=>
+                connection.query(`update appointment set  did=? , pid=? , appointment_time=?, appointment_date=? where aid=?;`,[did,pid,appointment_time,appointment_date,aid],(err,result)=>
                 {
                     if(err)
                         {
@@ -343,7 +343,7 @@ function update_appointment(req,res,next)
                         }
                         else
                         {
-                            return res.status(200).json({message:'appointment deleted successfully'});
+                            return res.status(200).json({message:'appointment updated successfully'});
                         }
                 })
             }

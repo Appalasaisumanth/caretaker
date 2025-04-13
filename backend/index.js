@@ -8,6 +8,8 @@ const doctor_routes=require('./routes/doctor');
 const patient_routes=require('./routes/patient');
 const room_routes=require('./routes/room');
 const appointment_routes=require('./routes/appointment');
+const test_routes=require('./routes/test');
+const treatment_routes=require('./routes/treatment');
 const app = express();
 
 
@@ -40,6 +42,10 @@ app.use('/doctor',doctor_routes)
 app.use('/patient',patient_routes)
 app.use('/room',room_routes);
 app.use('/appointment',appointment_routes);
+app.use('/test',test_routes);
+app.use('/treatment',treatment_routes);
+
+
 // set port, listen for requests
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

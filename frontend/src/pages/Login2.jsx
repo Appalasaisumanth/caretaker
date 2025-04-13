@@ -7,9 +7,18 @@ import { motion } from 'framer-motion';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import Loader from '../assets/Loader'; // Ensure the path is correct
 
+
+const roles = [
+  { value: 'patient', label: 'Patient', route: PatientRegisterRoute },
+  { value: 'doctor', label: 'Doctor', route: DoctorRegisterRoute },
+  { value: 'fdo', label: 'FDO', route: FdoRegisterRoute },
+  { value: 'deo', label: 'DEO', route: DeoRegisterRoute },
+  { value: 'admin', label: 'Admin', route: AdminRegisterRoute },
+];
+
 function Login() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ username: '', password: '' });
+  const [formData, setFormData] = useState({ username: '', password: '', role: 'Patient' }); // Added role with default value
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [visible, setIsVisible] = useState(false);
@@ -36,9 +45,10 @@ function Login() {
     event.preventDefault();
     setIsLoading(true);
 
-    if (formData.password && formData.username) {
+    if (formData.password && formData.username && formData.role) {
+      
       const formDataToSend = { username: formData.username, password: formData.password };
-      const response = await fetch('https://fulltoss-backend-9igo.onrender.com/login', {
+      const response = await fetch(`{}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -50,7 +60,7 @@ function Login() {
         const temporary = await response.json();
         setIsLoading(false);
         setMessage(`Welcome, ${formData.username}! Redirecting...`);
-        localStorage.setItem('user', `${temporary.result}+${formData.username}`);
+        localStorage.setItem('user', `${temporary.result}+${formData.username}+${formData.role}`); // Store role in localStorage
         setTimeout(() => {
           navigate('/dashboard');
         }, 5000);
@@ -118,7 +128,25 @@ function Login() {
                 onChange={handleChange}
                 placeholder="Enter your password"
               />
+              <EyeIcon onClick={visibleHandler}>
+                {visible ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+              </EyeIcon>
             </InputWrapper>
+          </InputGroup>
+          <InputGroup>
+            <InputLabel>Role</InputLabel>
+            <Select
+              id="role"
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+            >
+              <option value="Patient">Patient</option>
+              <option value="Admin">Admin</option>
+              <option value="Deo">DEO</option>
+              <option value="Fdo">FDO</option>
+              <option value="Doctor"> Doctor </option>
+            </Select>
           </InputGroup>
           <ForgotPassword>
             <a href="/forgot-password">Forgot Password?</a>
@@ -290,6 +318,23 @@ const Input = styled.input`
   &::placeholder {
     color: #bbb;
     font-weight: 400;
+  }
+`;
+
+const Select = styled.select`
+  width: 100%;
+  padding: 0.9rem 1.2rem;
+  font-size: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  outline: none;
+  background: #fff;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.25);
   }
 `;
 

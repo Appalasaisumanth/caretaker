@@ -80,11 +80,13 @@ function get_appointment(req,res,next)
             `SELECT 
       appointment_date,
       appointment_time,
+      appointment.details,
+      appointment.remarks,
       doctor.name AS dname,
       patient.name AS pname,
       doctor.qualification,
       doctor.experience,
-      doctor.department
+      doctor.department,appointment.aid
    FROM appointment
    INNER JOIN doctor ON doctor.id = appointment.did
    INNER JOIN patient ON patient.id = appointment.pid
@@ -228,8 +230,8 @@ function get_slots(req,res,next)
 }
 function book_appointment(req,res,next)
 {
-    const {did,appointment_time,appointment_date,pid}=req.body;
-    if(!did || !appointment_date|| !appointment_time || !pid)
+    const {did,appointment_time,appointment_date,pid, details}=req.body;
+    if(!did || !appointment_date|| !appointment_time || !pid || !details)
     {
         return res.status(500).json({message:'all feilds must be filled,some feilds are missing'});
 
@@ -247,7 +249,7 @@ function book_appointment(req,res,next)
             {return res.status(200).json({message:'this slot is booked try another slot',});}
             else
             {
-                connection.query(`INSERT INTO appointment (pid,did,appointment_date,appointment_time) values (${pid},${did},'${appointment_date}','${appointment_time}');`,(err,result)=>
+                connection.query(`INSERT INTO appointment (pid,did,appointment_date,appointment_time,details) values (${pid},${did},'${appointment_date}','${appointment_time}','${details}');`,(err,result)=>
                 {
                     if(err)
                         {
@@ -315,13 +317,24 @@ function delete_appointment(req,res,next)
 
 function update_appointment(req,res,next)
 {
-    const {aid,pid,did,appointment_time,appointment_date,}=req.body;
+    const {aid,pid,did,appointment_time,appointment_date, remarks, details}=req.body;
     if(!did || !appointment_date|| !appointment_time || !pid ||!aid)
     {
         return res.status(500).json({message:'all feilds must be filled,some feilds are missing'});
 
     }
     try{
+        let filters=[];
+        
+        if(remarks)
+        {
+            filters.append(`remarks=${remarks}`);
+
+        }
+        if (details)
+        {
+            filters.append(`details=${details}`);
+        }
     connection.query("SELECT *   from appointment where aid=? ",[aid],(err,result)=>{
         if(err)
         {
@@ -334,7 +347,7 @@ function update_appointment(req,res,next)
             {return res.status(200).json({message:'this slot is not booked cannot be updated',});}
             else
             {
-                connection.query(`update appointment set  did=? , pid=? , appointment_time=?, appointment_date=? where aid=?;`,[did,pid,appointment_time,appointment_date,aid],(err,result)=>
+                connection.query(`update appointment set  did=? , pid=? , appointment_time=?, appointment_date=?,  ${filters && filters.length ? ',' + filters.filter(f => f != null && f.trim() !== '').join(',') : ''} where aid=?;`,[did,pid,appointment_time,appointment_date,aid],(err,result)=>
                 {
                     if(err)
                         {

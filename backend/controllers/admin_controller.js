@@ -183,6 +183,8 @@ function create_table_appointments(req, res, next) {
               aid INT PRIMARY KEY AUTO_INCREMENT,
               pid INT,
               did INT,
+              details varchar(150),
+              remarks varchar(150),
               appointment_time ENUM(
         '10:00:00',
         '11:00:00',

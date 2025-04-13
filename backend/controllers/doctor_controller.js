@@ -52,8 +52,7 @@ async function populate_doctors(req, res) {
 function  login_doctor(req,res,next)
 { 
     let {username,password}=req.body;
-    
-    if (!username || !password)
+    if (!name || !password)
     {
         return res.status(400).json({message:'name or password is null'});
     }

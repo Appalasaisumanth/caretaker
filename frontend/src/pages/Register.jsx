@@ -1,186 +1,452 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import axios from "axios";
 import { motion } from 'framer-motion';
-import '@fortawesome/fontawesome-free/css/all.min.css';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { DeoRegisterRoute, DoctorRegisterRoute, FdoRegisterRoute, PatientRegisterRoute, AdminRegisterRoute } from '../APIRoutes/APIRoutes';
 
-// Reusing styled components from Login (same as above, included for clarity)
-const Container = styled.div`
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-  min-height: 100vh;
+// Styled Components
+const RegisterContainer = styled.div`
+  height: 100vh;
+  width: 100vw;
+  background: linear-gradient(135deg, #e6f0fa, #d1e3f6);
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: 'Poppins', sans-serif;
+  overflow: hidden;
 `;
 
-const FormSection = styled.section`
-  padding: 3rem 0;
-  max-width: 500px;
-  width: 100%;
-  margin: 0 auto;
+const RegisterBox = styled(motion.div)`
+  width: min(90vw, 450px);
+  padding: 3rem 2.5rem;
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 20px;
+  box-shadow: 0 12px 32px rgba(0, 91, 181, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  backdrop-filter: blur(8px);
 `;
 
-const FormContainer = styled.div`
-  background: white;
-  padding: 2.5rem;
-  border-radius: 15px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-  text-align: center;
-`;
-
-const FormTitle = styled(motion.h2)`
+const RegisterTitle = styled.h2`
   color: #005bb5;
-  font-size: 2rem;
-  font-weight: 600;
+  font-size: 2.5rem;
+  font-weight: 700;
   margin-bottom: 1.5rem;
+  text-align: center;
+  letter-spacing: 0.5px;
 `;
 
 const Form = styled.form`
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  align-items: center;
 `;
 
-const InputGroup = styled.div`
+const ButtonGroup = styled.div`
+  width: 100%;
   display: flex;
-  flex-direction: column;
-  text-align: left;
+  justify-content: flex-start;
+  margin-bottom: 1.5rem;
 `;
 
-const Label = styled.label`
+const BackButton = styled(motion.button)`
   font-size: 1rem;
-  color: #333;
   font-weight: 500;
-  margin-bottom: 0.5rem;
-`;
-
-const Input = styled.input`
-  padding: 0.75rem;
-  font-size: 1rem;
-  border: 1px solid #ccc;
+  background: #f8f9fa;
+  border: 2px solid #007bff;
+  color: #007bff;
   border-radius: 8px;
-  outline: none;
-  transition: border-color 0.3s ease;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
 
-  &:focus {
-    border-color: #007bff;
+  &:hover {
+    background: #007bff;
+    color: white;
   }
 `;
 
-const Button = styled(motion.button)`
-  background: #007bff;
-  color: white;
-  padding: 0.75rem;
-  border: none;
-  border-radius: 25px;
+const InputGroup = styled(motion.div)`
+  width: 100%;
+  margin-bottom: 1.8rem;
+  position: relative;
+`;
+
+const InputLabel = styled.label`
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.5rem;
+  display: block;
+  text-align: left;
+`;
+
+const InputWrapper = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 0.9rem 1.2rem;
+  font-size: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  outline: none;
+  background: #fff;
+  transition: all 0.3s ease;
+
+  &:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.25);
+  }
+
+  &::placeholder {
+    color: #bbb;
+    font-weight: 400;
+  }
+`;
+
+const Select = styled.select`
+  width: 100%;
+  padding: 0.9rem 1.2rem;
+  font-size: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  outline: none;
+  background: #fff;
+  color: #333;
+  transition: all 0.3s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1em;
+
+  &:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.25);
+  }
+`;
+
+const EyeIcon = styled.div`
+  position: absolute;
+  right: 1.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: color 0.3s ease;
 
   &:hover {
-    background: #005bb5;
+    color: #007bff;
+  }
+`;
+
+const SubmitButton = styled(motion.button)`
+  width: 100%;
+  padding: 0.9rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #007bff, #005bb5);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: linear-gradient(135deg, #005bb5, #003d80);
+    transform: translateY(-2px);
+  }
+
+  &:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
   }
 `;
 
 const LinkText = styled.p`
-  font-size: 0.9rem;
-  color: #666;
-  margin-top: 1rem;
+  font-size: 1.1rem;
+  color: #444;
+  margin-top: 1.5rem;
+  text-align: center;
 `;
 
-const Link = styled.a`
+const NavLink = styled.button`
+  background: none;
+  border: none;
   color: #007bff;
-  text-decoration: none;
-  font-weight: 500;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  transition: color 0.3s ease;
 
   &:hover {
-    text-decoration: underline;
+    color: #005bb5;
   }
 `;
 
 const ErrorMessage = styled.p`
   color: #dc3545;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   margin-top: 0.5rem;
+  text-align: left;
 `;
 
 // Animation Variants
 const fadeIn = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut' } },
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+};
+
+const stagger = {
+  visible: {
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
 };
 
 const Register = () => {
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    role: '',
+    password: '',
+    confirmPassword: '',
+  });
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const roles = [
+    { value: 'patient', label: 'Patient', route: PatientRegisterRoute },
+    { value: 'doctor', label: 'Doctor', route: DoctorRegisterRoute },
+    { value: 'fdo', label: 'FDO', route: FdoRegisterRoute },
+    { value: 'deo', label: 'DEO', route: DeoRegisterRoute },
+    { value: 'admin', label: 'Admin', route: AdminRegisterRoute },
+  ];
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+    setError(''); // Clear error on input change
+  };
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setConfirmPasswordVisible(!confirmPasswordVisible);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add registration logic here (e.g., API call)
-    console.log('Registration submitted');
+    setIsLoading(true);
+    setError('');
+
+    // Client-side validation
+    if (!formData.name || !formData.email || !formData.role || !formData.password || !formData.confirmPassword) {
+      setError('Please fill in all fields');
+      setIsLoading(false);
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const selectedRole = roles.find((r) => r.value === formData.role);
+      if (!selectedRole) {
+        setError('Invalid role selected');
+        setIsLoading(false);
+        return;
+      }
+
+      const response = await fetch(selectedRole.route, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      if (response.ok) {
+        toast.success('Registration successful! Redirecting to login...', {
+          position: 'top-center',
+          autoClose: 5000,
+        });
+        setIsLoading(false);
+        setTimeout(() => {
+          navigate('/login');
+        }, 5000);
+      } else {
+        const data = await response.json();
+        setError(data.message || 'Registration failed');
+        setIsLoading(false);
+      }
+    } catch (err) {
+      setError('Something went wrong. Please try again.');
+      setIsLoading(false);
+    }
   };
 
   return (
-    <Container>
-      <FormSection>
-        <FormContainer>
-          <FormTitle initial="hidden" animate="visible" variants={fadeIn}>
-            Register with CarePlus
-          </FormTitle>
-          <Form onSubmit={handleSubmit}>
-            <InputGroup>
-              <Label htmlFor="name">Full Name</Label>
+    <RegisterContainer>
+      <RegisterBox
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, ease: 'easeOut' }}
+      >
+        <RegisterTitle>Welcome to CarePlus</RegisterTitle>
+        <Form onSubmit={handleSubmit}>
+          <ButtonGroup>
+            <BackButton
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate('/')}
+              type="button"
+            >
+              ← Back
+            </BackButton>
+          </ButtonGroup>
+          <InputGroup as={motion.div} variants={fadeIn} initial="hidden" animate="visible">
+            <InputLabel htmlFor="name">Full Name</InputLabel>
+            <Input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Enter your full name"
+              required
+            />
+          </InputGroup>
+          <InputGroup as={motion.div} variants={fadeIn} initial="hidden" animate="visible">
+            <InputLabel htmlFor="email">Email</InputLabel>
+            <Input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Enter your email"
+              required
+            />
+          </InputGroup>
+          <InputGroup as={motion.div} variants={fadeIn} initial="hidden" animate="visible">
+            <InputLabel htmlFor="role">Role</InputLabel>
+            <Select
+              id="role"
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              required
+            >
+              <option value="" disabled>
+                Select your role
+              </option>
+              {roles.map((role) => (
+                <option key={role.value} value={role.value}>
+                  {role.label}
+                </option>
+              ))}
+            </Select>
+          </InputGroup>
+          <InputGroup as={motion.div} variants={fadeIn} initial="hidden" animate="visible">
+            <InputLabel htmlFor="password">Password</InputLabel>
+            <InputWrapper>
               <Input
-                type="text"
-                id="name"
-                placeholder="Enter your full name"
-                required
-              />
-            </InputGroup>
-            <InputGroup>
-              <Label htmlFor="email">Email</Label>
-              <Input
-                type="email"
-                id="email"
-                placeholder="Enter your email"
-                required
-              />
-            </InputGroup>
-            <InputGroup>
-              <Label htmlFor="password">Password</Label>
-              <Input
-                type="password"
+                type={passwordVisible ? 'text' : 'password'}
                 id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
                 placeholder="Create a password"
                 required
               />
-            </InputGroup>
-            <InputGroup>
-              <Label htmlFor="confirm-password">Confirm Password</Label>
+              <EyeIcon onClick={togglePasswordVisibility}>
+                {passwordVisible ? <FiEyeOff size={22} /> : <FiEye size={22} />}
+              </EyeIcon>
+            </InputWrapper>
+          </InputGroup>
+          <InputGroup as={motion.div} variants={fadeIn} initial="hidden" animate="visible">
+            <InputLabel htmlFor="confirm-password">Confirm Password</InputLabel>
+            <InputWrapper>
               <Input
-                type="password"
+                type={confirmPasswordVisible ? 'text' : 'password'}
                 id="confirm-password"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
                 placeholder="Confirm your password"
                 required
               />
-            </InputGroup>
-            {/* Example error message (optional, can be dynamic) */}
-            {/* <ErrorMessage>Passwords do not match</ErrorMessage> */}
-            <Button
-              type="submit"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Register
-            </Button>
-          </Form>
-          <LinkText>
-            Already have an account? <Link href="/login">Login here</Link>
-          </LinkText>
-        </FormContainer>
-      </FormSection>
-    </Container>
+              <EyeIcon onClick={toggleConfirmPasswordVisibility}>
+                {confirmPasswordVisible ? <FiEyeOff size={22} /> : <FiEye size={22} />}
+              </EyeIcon>
+            </InputWrapper>
+            {error && <ErrorMessage>{error}</ErrorMessage>}
+          </InputGroup>
+          <SubmitButton
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            type="submit"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Registering...' : 'Register'}
+          </SubmitButton>
+        </Form>
+        <LinkText>
+          Already have an account?{' '}
+          <NavLink onClick={() => navigate('/login')}>Login</NavLink>
+        </LinkText>
+        <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+          toastStyle={{
+            background: '#fff',
+            color: '#333',
+            borderRadius: '10px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+          }}
+        />
+      </RegisterBox>
+    </RegisterContainer>
   );
 };
 

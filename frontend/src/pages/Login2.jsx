@@ -3,11 +3,22 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styled from 'styled-components';
+import { motion } from 'framer-motion';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 import Loader from '../assets/Loader'; // Ensure the path is correct
+
+
+const roles = [
+  { value: 'patient', label: 'Patient', route: PatientRegisterRoute },
+  { value: 'doctor', label: 'Doctor', route: DoctorRegisterRoute },
+  { value: 'fdo', label: 'FDO', route: FdoRegisterRoute },
+  { value: 'deo', label: 'DEO', route: DeoRegisterRoute },
+  { value: 'admin', label: 'Admin', route: AdminRegisterRoute },
+];
 
 function Login() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ username: '', password: '' });
+  const [formData, setFormData] = useState({ username: '', password: '', role: 'Patient' }); // Added role with default value
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [visible, setIsVisible] = useState(false);
@@ -34,9 +45,10 @@ function Login() {
     event.preventDefault();
     setIsLoading(true);
 
-    if (formData.password && formData.username) {
+    if (formData.password && formData.username && formData.role) {
+      
       const formDataToSend = { username: formData.username, password: formData.password };
-      const response = await fetch('https://fulltoss-backend-9igo.onrender.com/login', {
+      const response = await fetch(`{}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -47,10 +59,10 @@ function Login() {
       if (response.ok) {
         const temporary = await response.json();
         setIsLoading(false);
-        setMessage(`Your team is ${temporary.result}, you can update them later`);
-        localStorage.setItem('user', `${temporary.result}+${formData.username}`);
+        setMessage(`Welcome, ${formData.username}! Redirecting...`);
+        localStorage.setItem('user', `${temporary.result}+${formData.username}+${formData.role}`); // Store role in localStorage
         setTimeout(() => {
-          navigate('/shop');
+          navigate('/dashboard');
         }, 5000);
       } else {
         const temporary = await response.json();
@@ -58,282 +70,335 @@ function Login() {
         setIsLoading(false);
       }
     } else {
-      setMessage('Input all fields');
+      setMessage('Please fill in all fields');
       setIsLoading(false);
     }
   };
 
   const visibleHandler = () => {
-    const passwordInput = document.getElementById('password2');
-    passwordInput.type = 'text';
+    const passwordInput = document.getElementById('password');
+    passwordInput.type = visible ? 'password' : 'text';
     setIsVisible(!visible);
-
-    setTimeout(() => {
-      passwordInput.type = 'password';
-      setIsVisible(!visible);
-    }, 500);
   };
 
   return (
     <LoginContainer>
-      <Main2>
-        <Main>
-          <BackButton onClick={() => navigate('/')}>←</BackButton>
-          <WelcomeText>welcome back</WelcomeText>
-          <Text1>
-            <div>New to the store</div>
-            <ButtonNavig onClick={() => navigate('/register')}>Register</ButtonNavig>
-          </Text1>
-          <GInput>
+      <LoginBox
+        as={motion.div}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, ease: 'easeOut' }}
+      >
+        <LoginTitle>Welcome to CarePlus</LoginTitle>
+        <Text1>
+          New to CarePlus?{' '}
+          <NavLink onClick={() => navigate('/register')}>Register</NavLink>
+        </Text1>
+        <Form onSubmit={submitHandler}>
+          <ButtonGroup>
+            <BackButton
+              as={motion.button}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate('/')}
+              type="button"
+            >
+              ← Back
+            </BackButton>
+          </ButtonGroup>
+          <InputGroup>
+            <InputLabel>Username</InputLabel>
             <Input
               type="text"
-              id="user-name2"
+              id="username"
               name="username"
               value={formData.username}
               onChange={handleChange}
-              placeholder=" "
+              placeholder="Enter your username"
             />
-            <Label htmlFor="user-name2">Username</Label>
-          </GInput>
-          <GInput>
-            <Input
-              type="password"
-              id="password2"
-              name="password"
-              value={formData.password}
+          </InputGroup>
+          <InputGroup>
+            <InputLabel>Password</InputLabel>
+            <InputWrapper>
+              <Input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Enter your password"
+              />
+              <EyeIcon onClick={visibleHandler}>
+                {visible ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+              </EyeIcon>
+            </InputWrapper>
+          </InputGroup>
+          <InputGroup>
+            <InputLabel>Role</InputLabel>
+            <Select
+              id="role"
+              name="role"
+              value={formData.role}
               onChange={handleChange}
-              placeholder=" "
-            />
-            <Label htmlFor="password2">Password</Label>
-            <EyeIcon
-              src="/closed_eye.png"
-              alt="closed-eye"
-              onClick={visibleHandler}
-            />
-          </GInput>
+            >
+              <option value="Patient">Patient</option>
+              <option value="Admin">Admin</option>
+              <option value="Deo">DEO</option>
+              <option value="Fdo">FDO</option>
+              <option value="Doctor"> Doctor </option>
+            </Select>
+          </InputGroup>
           <ForgotPassword>
-            <a href="/">forgot password</a>
+            <a href="/forgot-password">Forgot Password?</a>
           </ForgotPassword>
-          <ButtonNavig onClick={submitHandler}>Submit</ButtonNavig>
-          {isLoading ? (
-            <LoaderContainer>
-              <Loader />
-            </LoaderContainer>
-          ) : (
-            <ToastContainer
-              position="top-right"
-              autoClose={5000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="light"
-            />
-          )}
-        </Main>
-      </Main2>
+          <SubmitButton
+            as={motion.button}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            type="submit"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Logging In...' : 'Login'}
+          </SubmitButton>
+        </Form>
+        {isLoading && (
+          <LoaderContainer>
+            <Loader />
+          </LoaderContainer>
+        )}
+        <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+          toastStyle={{
+            background: '#fff',
+            color: '#333',
+            borderRadius: '10px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+          }}
+        />
+      </LoginBox>
     </LoginContainer>
   );
 }
 
-export default Login;
-
 // Styled Components
-
-const GInput = styled.div`
-  position: relative;
-  margin: 20px auto;
-  width: 90%;
+const LoginContainer = styled.div`
+  height: 100vh;
+  width: 100vw;
+  background: linear-gradient(135deg, #e6f0fa, #d1e3f6);
   display: flex;
   align-items: center;
+  justify-content: center;
+  font-family: 'Poppins', sans-serif;
+  overflow: hidden;
+`;
+
+const LoginBox = styled.div`
+  width: min(90vw, 450px);
+  padding: 3rem 2.5rem;
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 20px;
+  box-shadow: 0 12px 32px rgba(0, 91, 181, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  backdrop-filter: blur(8px);
+`;
+
+const LoginTitle = styled.h2`
+  color: #005bb5;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  letter-spacing: 0.5px;
+`;
+
+const Text1 = styled.div`
+  font-size: 1.1rem;
+  color: #444;
+  margin-bottom: 2rem;
+  text-align: center;
+`;
+
+const NavLink = styled.button`
+  background: none;
+  border: none;
+  color: #007bff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #005bb5;
+  }
+`;
+
+const Form = styled.form`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const ButtonGroup = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 1.5rem;
+`;
+
+const BackButton = styled.button`
+  font-size: 1rem;
+  font-weight: 500;
+  background: #f8f9fa;
+  border: 2px solid #007bff;
+  color: #007bff;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #007bff;
+    color: white;
+  }
+`;
+
+const InputGroup = styled(motion.div)`
+  width: 95%;
+  margin-bottom: 1.8rem;
+  padding-right: 2rem;
+  position: relative;
+`;
+
+const InputLabel = styled.label`
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.5rem;
+  display: block;
+  text-align: left;
+`;
+
+const InputWrapper = styled.div`
+  position: relative;
+  width: 100%;
 `;
 
 const Input = styled.input`
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.9rem 1.2rem;
   font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
   outline: none;
-  background: none;
-  box-sizing: border-box;
-  transition: border-color 0.3s ease;
+  background: #fff;
+  transition: all 0.3s ease;
 
   &:focus {
     border-color: #007bff;
-    border-width: 2px;
-  }
-
-  &:focus + label,
-  &:not(:placeholder-shown) + label {
-    top: -10px;
-    left: 5px;
-    font-size: 12px;
-    color: #000000;
-    background-color: #ccc;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.25);
   }
 
   &::placeholder {
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out;
-  }
-
-  &:focus::placeholder {
-    opacity: 1;
+    color: #bbb;
+    font-weight: 400;
   }
 `;
 
-const Label = styled.label`
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: none;
-  padding: 0 5px;
+const Select = styled.select`
+  width: 100%;
+  padding: 0.9rem 1.2rem;
   font-size: 1rem;
-  color: #333;
-  pointer-events: none;
-  transition: all 0.2s ease-in-out;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  outline: none;
+  background: #fff;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.25);
+  }
 `;
 
-const EyeIcon = styled.img`
-  height: 30px;
-  width: 30px;
+const EyeIcon = styled.div`
   position: absolute;
-  right: 10px;
+  right: 1.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
   cursor: pointer;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #007bff;
+  }
 `;
 
 const ForgotPassword = styled.div`
-  margin-bottom: 10px;
+  width: 100%;
   text-align: right;
-  padding-right: 5%;
+  margin-bottom: 1.5rem;
 
   a {
-    color: #333;
-    font-size: 0.9rem;
+    color: #007bff;
+    font-size: 0.95rem;
+    font-weight: 500;
     text-decoration: none;
+    transition: color 0.3s ease;
 
     &:hover {
+      color: #005bb5;
       text-decoration: underline;
     }
   }
 `;
 
-const LoaderContainer = styled.div`
-  width: 100px;
-  margin: 20px auto;
-`;
-
-const Main2 = styled.div`
+const SubmitButton = styled.button`
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-top: 10vh;
-`;
-
-const Main = styled.div`
-  width: min(90vw, 420px);
-  box-shadow: 0 15px 25px rgba(129, 124, 124, 0.3);
-  border-radius: 10px;
-  backdrop-filter: blur(12px);
-  background-color: rgba(255, 255, 255, 0.3);
-  padding: 30px 20px;
-  text-align: center;
-  font-size: 1.1rem;
-  text-transform: capitalize;
-`;
-
-const BackButton = styled.button`
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  font-size: 24px;
-  font-weight: bold;
-  background: white;
-  border-radius: 50%;
-  border: 2px solid red;
-  color: red;
-  cursor: pointer;
-  width: 40px;
-  height: 40px;
-`;
-
-const WelcomeText = styled.div`
-  margin-bottom: 40px;
-  font-size: 1.6rem;
-  font-weight: bold;
-  color: #333;
-`;
-
-const Text1 = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 15px;
-
-  & > div {
-    margin-right: 10px;
-    font-size: 0.95rem;
-    color: #333;
-  }
-`;
-
-const LoginContainer = styled.div`
-  height: 100vh;
-  width: 100vw;
-  background: url('/your-background-image.jpg') center no-repeat; /* Add your background image */
-  background-size: cover;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Poppins', sans-serif;
-`;
-
-const LoginBox = styled.div`
-  width: min(90vw, 420px); /* Width adapts to viewport size */
-  padding: 2rem;
-  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
-  border-radius: 15px; /* Rounded corners */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const LoginTitle = styled.h2`
-  color: #005bb5;
-  font-size: 2rem;
+  padding: 0.9rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  margin-bottom: 1.5rem;
-`;
-
-const InputGroup = styled.div`
-  width: 100%;
-  margin-bottom: 1rem;
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-`;
-
-
-const ButtonNavig = styled.button`
-  font-size: 20px;
-  font-weight: 600;
-  background: #397b83;
-  color: #fff7e7;
+  background: linear-gradient(135deg, #007bff, #005bb5);
+  color: white;
   border: none;
   border-radius: 12px;
-  padding: 10px 25px;
-  margin-top: 10px;
   cursor: pointer;
-  transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease;
 
   &:hover {
-    background-color: #26575c;
-    transform: scale(1.05);
+    background: linear-gradient(135deg, #005bb5, #003d80);
+    transform: translateY(-2px);
+  }
+
+  &:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
   }
 `;
+
+const LoaderContainer = styled.div`
+  margin: 2rem auto;
+  display: flex;
+  justify-content: center;
+`;
+
+export default Login;

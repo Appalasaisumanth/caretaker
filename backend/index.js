@@ -12,10 +12,7 @@ const test_routes=require('./routes/test');
 const treatment_routes=require('./routes/treatment');
 const app = express();
 
-
-
 app.use(cors());
-
 
 app.use(express.json()); 
 

@@ -9,7 +9,7 @@ import Doctors from './pages/Doctors';
 import AdminDeo from './pages/AdminDeo';
 import AdminFdo from './pages/AdminFdo';
 import AddOperator from './pages/AddOperator';
-
+import PatientHome from './pages/PatientHome';
 
 function App() {
   return (
@@ -25,6 +25,7 @@ function App() {
         <Route path ='/admin/deo' element={<AdminDeo/>}/>
         <Route path ='/doctors' element={<Doctors/>}/>
         <Route path ='/admin/add' element={<AddOperator/>}/>
+        <Route path ='/patient' element={<PatientHome/>}/>
 
       </Routes>
     </BrowserRouter>

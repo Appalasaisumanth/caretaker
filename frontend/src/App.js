@@ -10,6 +10,8 @@ import AdminDeo from './pages/AdminDeo';
 import AdminFdo from './pages/AdminFdo';
 import AddOperator from './pages/AddOperator';
 import PatientHome from './pages/PatientHome';
+import FdoHome from './pages/FdoHome';
+import DeoHome from './pages/DeoHome';
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
         <Route path ='/doctors' element={<Doctors/>}/>
         <Route path ='/admin/add' element={<AddOperator/>}/>
         <Route path ='/patient' element={<PatientHome/>}/>
+        <Route path ='/fdo' element={<FdoHome/>}/>
+        <Route path ='/deo' element={<DeoHome/>}/>
 
       </Routes>
     </BrowserRouter>

@@ -313,7 +313,7 @@ function get_doctor_by_username(req,res,next)
 const name=username;
     try {
 
-        connection.query("SELECT name,qualification,experience,department FROM doctor where name=?",[name], async (err2, result2) => {
+        connection.query("SELECT name,qualification,experience,department,id  FROM doctor where name=?",[name], async (err2, result2) => {
             
             if (err2) 
                 {

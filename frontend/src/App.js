@@ -3,7 +3,13 @@ import Home from './pages/Home';
 import Register from './pages/Register';
 import Login from './pages/Login2';
 import ForgotPassword from './pages/ForgotPassword'
-import AdminHome from './pages/AdminHome';
+import AdminHome from './pages/AdminHome'
+import AdminDoctor from './pages/AdminDoctor';
+import Doctors from './pages/Doctors';
+import AdminDeo from './pages/AdminDeo';
+import AdminFdo from './pages/AdminFdo';
+import AddOperator from './pages/AddOperator';
+
 
 function App() {
   return (
@@ -13,7 +19,12 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path ='/forgot_password' element={<ForgotPassword/>} />
-        <Route path="/admin" element={<AdminHome />} />
+        <Route path ='/adminh' element={<AdminHome/>}/>
+        <Route path ='/admin/doctor' element={<AdminDoctor/>}/>
+        <Route path ='/admin/fdo' element={<AdminFdo/>}/>
+        <Route path ='/admin/deo' element={<AdminDeo/>}/>
+        <Route path ='/doctors' element={<Doctors/>}/>
+        <Route path ='/admin/add' element={<AddOperator/>}/>
 
       </Routes>
     </BrowserRouter>

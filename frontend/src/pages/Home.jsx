@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import img3 from '../images/imgg3.jpg';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-
+import { GetDoctorsRoute } from '../APIRoutes/APIRoutes';
 // Sample data for dynamic sections
 const services = [
   { icon: 'fas fa-stethoscope', title: 'General Medicine', description: 'Comprehensive care for all ages with a focus on prevention and treatment.' },
@@ -244,8 +244,10 @@ const DoctorDescription = styled.p`
 
 const CenteredButton = styled(Button)`
   display: block;
-  margin: 3rem auto;
-  padding: 0.75rem 2rem;
+  padding: auto;
+  margin: 0.75rem auto ;
+  width:8.5rem;
+  text-align:center;
 `;
 
 const AppointmentRow = styled(HeroRow)`
@@ -332,7 +334,35 @@ const stagger = {
 
 const Home = () => {
   const  [doctors,setDoctors]=useState([]);
+  useEffect( ()=> {
+    const get_doctors=async ()=>{
+    try {
+      const response = await fetch(GetDoctorsRoute, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+       setDoctors(data.doctors)
+      } else {
+        const data = await response.json();
+        alert(data.message || 'getting doctors failed');
+       
+      }
+    } catch (err) {
+      console.log(err);
+      alert('Something went wrong. Please try again.');
+     
+    }
+  }
+  get_doctors();
+}
   
+  ,[])
+
   return (
     <Container>
       {/* HEADER */}
@@ -421,15 +451,16 @@ const Home = () => {
             animate="visible"
             variants={stagger}
           >
-            {doctors.map((doctor, index) => (
+            {doctors.slice(0, 3).map((doctor, index) => (
               <DoctorCard
-                key={index}
+                key={index }
                 variants={fadeIn}
               >
-                <DoctorImage src="https://via.placeholder.com/150" alt="Doctor" />
+                <DoctorImage src="https://as1.ftcdn.net/v2/jpg/06/48/69/42/1000_F_648694278_haC94bdL26EedqLMIbMpLACqzxwuvq4f.webp" alt="Doctor" />
                 <DoctorName>{doctor.name}</DoctorName>
-                <DoctorSpecialty>{doctor.specialty}</DoctorSpecialty>
-                <DoctorDescription>{doctor.description}</DoctorDescription>
+                <DoctorSpecialty>{doctor.department || "Dentist"}</DoctorSpecialty>
+                <DoctorDescription>{doctor.qualification || "MBBS MD"}</DoctorDescription>
+
               </DoctorCard>
             ))}
           </DoctorsGrid>

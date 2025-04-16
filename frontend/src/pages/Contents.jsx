@@ -9,16 +9,18 @@ const Container = styled.div`
 `;
 
 const Title = styled.h2`
-  font-size: 1.75rem;
+  font-size: 2.5rem;
   font-weight: 600;
-  color: #007bff;
+  color: #005bb5;
   margin-bottom: 1rem;
+  text-align: center;
 `;
 
 const Description = styled.p`
-  font-size: 1rem;
-  color: #333;
+  font-size: 1.3rem;
+  color: #444;
   margin-bottom: 1rem;
+  text-align: center;
 `;
 
 const CardContainer = styled.div`
@@ -41,6 +43,7 @@ const Card = styled(Link)`
   border-radius: 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 250px;
+  height: 100%;
   text-align: center;
   transition: transform 0.2s, box-shadow 0.2s;
   text-decoration: none;

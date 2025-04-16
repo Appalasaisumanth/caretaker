@@ -20,3 +20,17 @@ export const DeoupdateRoute = `${host}/deo/update`
 export const FdoupdateRoute = `${host}/fdo/update`
 export const PatientupdateRoute = `${host}/patient/update`
 
+
+export const GetDoctorsRoute=`${host}/doctor`
+export const GetDeoRoute=`${host}/deo`
+export const GetFdoRoute=`${host}/fdo`
+
+export const DeoAddOperatorRoute=`${host}/deo/register`
+export const FdoAddOperatorRoute=`${host}/fdo/register`
+export const DoctorAddOperatorRoute=`${host}/doctor/register`
+
+
+export const DeleteDoctorRoute=`${host}/doctor/delete`
+export const DeleteFdoRoute=`${host}/fdo/delete`
+export const DeleteDeoRoute=`${host}/deo/delete`
+

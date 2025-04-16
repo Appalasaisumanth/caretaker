@@ -1,194 +1,130 @@
-import React, { useState } from 'react';
-import { Outlet, Link } from 'react-router-dom';
-import { FaSignOutAlt, FaUserMd, FaHeadset, FaKeyboard, FaTimes, FaBars, FaArrowLeft } from 'react-icons/fa';
+import React, { useEffect, useState } from 'react';
+import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
+import Header from './Header';
+import { FaUserMd, FaHeadset, FaKeyboard } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
-// Styled components for AdminHome
-const MainContainer = styled.div`
-  display: flex;
-  min-height: 100vh;
-  flex-direction: row;
-  background-color: #f8f9fa;
+const Container = styled.div`
+  padding: 1rem;
 `;
 
-const SidebarToggle = styled.button`
-  display: none;
-  position: fixed;
-  top: 0.5rem;
-  left: 0.5rem;
-  z-index: 1100;
-  background-color: #2d3748;
-  color: white;
-  padding: 0.5rem;
-  border-radius: 0.25rem;
-  border: none;
-  cursor: pointer;
+const Title = styled.h2`
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #005bb5;
+  margin-bottom: 1rem;
+  text-align: center;
+`;
+
+const Description = styled.p`
+  font-size: 1.3rem;
+  color: #444;
+  margin-bottom: 1rem;
+  text-align: center;
+`;
+
+const CardContainer = styled.div`
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+  justify-content: center;
 
   @media (max-width: 768px) {
-    display: block;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
   }
 `;
 
-const Sidebar = styled.div`
+const Card = styled(Link)`
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 250px;
-  background-color: #2d3748;
-  color: white;
-  transition: transform 0.3s ease-in-out;
-  position: fixed;
-  top: 0;
-  left: 0;
   height: 100%;
-  z-index: 1000;
-  transform: ${({ isOpen }) => (isOpen ? 'translateX(0)' : 'translateX(-100%)')};
-
-  @media (min-width: 769px) {
-    transform: translateX(0);
-    position: relative;
-    height: 100%;
-  }
-`;
-
-const SidebarHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background-color: #1a202c;
-`;
-
-const SidebarTitle = styled.h3`
-  margin: 0;
-  font-size: 1.5rem;
-  color: #fff;
-`;
-
-const CloseButton = styled.button`
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  font-size: 1.2rem;
-
-  @media (min-width: 769px) {
-    display: none;
-  }
-`;
-
-const SidebarMenu = styled.div`
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-`;
-
-const MenuItem = styled(Link)`
-  display: flex;
-  align-items: center;
-  padding: 0.75rem;
-  color: white;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
   text-decoration: none;
-  border-radius: 0.25rem;
-  margin-bottom: 0.5rem;
-  transition: background-color 0.2s;
+  color: inherit;
 
   &:hover {
-    background-color: #4a5568;
-    color: #fff;
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
 
   @media (max-width: 768px) {
     width: 100%;
-    justify-content: flex-start;
-    padding: 0.5rem;
+    max-width: 300px;
+  }
+
+  &.doctor-card {
+    border-top: 4px solid #48bb78;
+  }
+
+  &.front-desk-card {
+    border-top: 4px solid #4299e1;
+  }
+
+  &.data-entry-card {
+    border-top: 4px solid #ed8936;
   }
 `;
 
-const MenuIcon = styled.span`
-  margin-right: 0.75rem;
-  font-size: 1.2rem;
+const CardIcon = styled.div`
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #2d3748;
 `;
 
-const MenuText = styled.span`
-  font-size: 1rem;
+const CardTitle = styled.h3`
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
 `;
 
-const Content = styled.div`
-  flex: 1;
-  padding: 2rem;
-  margin-left: 0;
-  transition: margin-left 0.3s ease-in-out;
-  background-color: #f7fafc;
-
-  @media (min-width: 769px) {
-    margin-left: 250px;
-  }
-
-  @media (max-width: 768px) {
-    padding: 1rem;
-    padding-top: 3rem;
-  }
+const CardText = styled.p`
+  font-size: 0.9rem;
+  color: #666;
 `;
+
+const Contents = () => {
+  const [user, setUser] = useState('');
+
+  useEffect(() => {
+    let user = localStorage.getItem('user') || 'Admin';
+    setUser(user.split('+')[0]);
+  }, []);}
 
 const AdminHome = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  const logout = () => {
-    if (window.confirm('Are you sure you want to logout?')) {
-      localStorage.removeItem('user');
-      window.alert('Successful logout');
-      setIsSidebarOpen(false);
-      window.location.href = '/';
-    }
-  };
-
-  const menuItems = [
-    { name: 'Back', icon: <FaArrowLeft />, path: '/' },
-    { name: 'Logout', icon: <FaSignOutAlt />, action: logout },
-    { name: 'Doctor', icon: <FaUserMd />, path: '/admin/doctor' },
-    { name: 'Front Desk', icon: <FaHeadset />, path: '/admin/front-desk' },
-    { name: 'Data Entry', icon: <FaKeyboard />, path: '/admin/data-entry' },
-  ];
-
   return (
-    <MainContainer>
-      <SidebarToggle onClick={toggleSidebar}>
-        <FaBars />
-      </SidebarToggle>
-
-      <Sidebar isOpen={isSidebarOpen}>
-        <SidebarHeader>
-          <SidebarTitle>Admin Panel</SidebarTitle>
-          <CloseButton onClick={toggleSidebar}>
-            <FaTimes />
-          </CloseButton>
-        </SidebarHeader>
-        <SidebarMenu>
-          {menuItems.map((item, index) => (
-            <MenuItem
-              key={index}
-              to={item.path || '#'}
-              onClick={(e) => {
-                if (item.action) {
-                  e.preventDefault();
-                  item.action();
-                }
-                toggleSidebar();
-              }}
-            >
-              <MenuIcon>{item.icon}</MenuIcon>
-              <MenuText>{item.name}</MenuText>
-            </MenuItem>
-          ))}
-        </SidebarMenu>
-      </Sidebar>
-
-      <Content>
-        <Outlet />
-      </Content>
-    </MainContainer>
+    <>
+    <Header/>
+    <Container>
+      <Title>Welcome {'admin'}</Title>
+      <Description>This is the admin dashboard</Description>
+      <CardContainer>
+        <Card to="/admin/doctor" className="doctor-card">
+          <CardIcon><FaUserMd /></CardIcon>
+          <CardTitle>Doctor</CardTitle>
+          <CardText>Manage doctor profiles</CardText>
+        </Card>
+        <Card to="/admin/fdo" className="front-desk-card">
+          <CardIcon><FaHeadset /></CardIcon>
+          <CardTitle>Front Desk</CardTitle>
+          <CardText>Manage front desk operations</CardText>
+        </Card>
+        <Card to="/admin/deo" className="data-entry-card">
+          <CardIcon><FaKeyboard /></CardIcon>
+          <CardTitle>Data Entry</CardTitle>
+          <CardText>Manage data entry tasks</CardText>
+        </Card>
+      </CardContainer>
+    </Container>
+    </>
   );
 };
 

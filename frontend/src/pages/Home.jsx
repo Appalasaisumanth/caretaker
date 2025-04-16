@@ -331,7 +331,8 @@ const stagger = {
 };
 
 const Home = () => {
-  const 
+  const  [doctors,setDoctors]=useState([]);
+  
   return (
     <Container>
       {/* HEADER */}

@@ -34,3 +34,5 @@ export const DeleteDoctorRoute=`${host}/doctor/delete`
 export const DeleteFdoRoute=`${host}/fdo/delete`
 export const DeleteDeoRoute=`${host}/deo/delete`
 
+
+

@@ -1,4 +1,4 @@
-import React from 'react';
+import {React,useEffect,useState} from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import img3 from '../images/imgg3.jpg';
@@ -12,11 +12,11 @@ const services = [
   { icon: 'fas fa-ambulance', title: 'Emergency Care', description: '24/7 emergency services with rapid response teams.' },
 ];
 
-const doctors = [
-  { name: 'Dr. Emily Carter', specialty: 'General Physician', description: 'Experienced in family medicine with a patient-first approach.' },
-  { name: 'Dr. Michael Lee', specialty: 'Cardiologist', description: 'Specialist in heart health with over 15 years of experience.' },
-  { name: 'Dr. Sarah Patel', specialty: 'Radiologist', description: 'Expert in diagnostic imaging and patient care.' },
-];
+// const doctors = [
+//   { name: 'Dr. Emily Carter', specialty: 'General Physician', description: 'Experienced in family medicine with a patient-first approach.' },
+//   { name: 'Dr. Michael Lee', specialty: 'Cardiologist', description: 'Specialist in heart health with over 15 years of experience.' },
+//   { name: 'Dr. Sarah Patel', specialty: 'Radiologist', description: 'Expert in diagnostic imaging and patient care.' },
+// ];
 
 // Styled Components
 const Container = styled.div`
@@ -331,6 +331,7 @@ const stagger = {
 };
 
 const Home = () => {
+  const 
   return (
     <Container>
       {/* HEADER */}

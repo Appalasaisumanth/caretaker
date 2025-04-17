@@ -2,11 +2,12 @@ import { React, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GetDoctorsRoute } from '../APIRoutes/APIRoutes';
+import { useNavigate } from 'react-router-dom';
 
 // Styled Components
 const Container = styled.div`
   width: 100%;
-  height:80%;
+  height: 80%;
   margin: 0;
   padding: 0;
   font-family: 'Poppins', sans-serif;
@@ -110,7 +111,6 @@ const SectionContainer = styled.div`
   max-width: 1200px;
   padding: 0 5px 0 0;
   display: flex;
- 
   margin-left: ${props => (props.showFilters ? '400px' : '0')}; /* Offset for fixed sidebar */
 
   @media (max-width: 768px) {
@@ -169,15 +169,42 @@ const Checkbox = styled.input`
   cursor: pointer;
 `;
 
+const SearchBarContainer = styled.div`
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: center;
+`;
+
+const SearchInput = styled.input`
+  width: 100%;
+  max-width: 500px;
+  padding: 0.6rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+  &:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+    outline: none;
+  }
+
+  &::placeholder {
+    color: #999;
+  }
+`;
+
 const DoctorsFlex = styled.div`
   flex: 2;
   display: flex;
   flex-wrap: wrap;
   gap: 3rem;
   justify-content: flex-start;
-  height:400px;
+  height: 400px;
 `;
-
 
 const DoctorCard = styled(motion.div)`
   background: white;
@@ -186,15 +213,11 @@ const DoctorCard = styled(motion.div)`
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
   padding: 1.2rem;
   transition: transform 0.3s ease;
-  
 
   &:hover {
     transform: translateY(-8px);
   }
-
-
 `;
-
 
 const DoctorImage = styled.img`
   width: 100px;
@@ -270,7 +293,7 @@ const SectionTitle = styled(motion.h2)`
   font-size: 2.5rem;
   font-weight: 600;
   margin-bottom: 3rem;
-  height:10px;
+  height: 10px;
 `;
 
 const FilterToggleButton = styled.button`
@@ -323,8 +346,10 @@ const Doctors = () => {
   const [filteredDoctors, setFilteredDoctors] = useState([]);
   const [selectedDepartments, setSelectedDepartments] = useState([]);
   const [selectedExperience, setSelectedExperience] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [showFilters, setShowFilters] = useState(true);
+  const naviage=useNavigate();
 
   // Adjust doctors per page based on filter visibility
   const doctorsPerPage = showFilters ? 3 : 4;
@@ -382,23 +407,39 @@ const Doctors = () => {
     setCurrentPage(1);
   };
 
-  // Clear all filters
-  const clearFilters = () => {
-    setSelectedDepartments([]);
-    setSelectedExperience([]);
+  // Handle search input
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
     setCurrentPage(1);
   };
 
-  // Apply filters
+  // Clear all filters and search
+  const clearFilters = () => {
+    setSelectedDepartments([]);
+    setSelectedExperience([]);
+    setSearchTerm('');
+    setCurrentPage(1);
+  };
+
+  // Apply filters and search
   useEffect(() => {
     let result = [...doctors];
 
+    // Apply search filter
+    if (searchTerm.trim()) {
+      result = result.filter(doctor =>
+        doctor.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
+      );
+    }
+
+    // Apply department filter
     if (selectedDepartments.length > 0) {
       result = result.filter(doctor =>
         selectedDepartments.includes(doctor.department || 'Dentist')
       );
     }
 
+    // Apply experience filter
     if (selectedExperience.length > 0) {
       result = result.filter(doctor => {
         const exp = parseInt(doctor.experience || 0);
@@ -412,8 +453,7 @@ const Doctors = () => {
     }
 
     setFilteredDoctors(result);
-    setCurrentPage(1);
-  }, [selectedDepartments, selectedExperience, doctors]);
+  }, [selectedDepartments, selectedExperience, searchTerm, doctors]);
 
   // Pagination logic
   const totalPages = Math.ceil(filteredDoctors.length / doctorsPerPage);
@@ -494,6 +534,14 @@ const Doctors = () => {
             <SectionTitle initial="hidden" animate="visible" variants={fadeIn}>
               Our Doctors
             </SectionTitle>
+            <SearchBarContainer>
+              <SearchInput
+                type="text"
+                placeholder="Search doctors by name..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+              />
+            </SearchBarContainer>
             <DoctorsFlex as={motion.div} initial="hidden" animate="visible" variants={stagger}>
               {currentDoctors.length > 0 ? (
                 currentDoctors.map((doctor, index) => (
@@ -508,6 +556,7 @@ const Doctors = () => {
                       {doctor.experience || '5'} Years Experience
                     </DoctorExperience>
                     <DoctorDescription>{doctor.qualification || 'MBBS MD'}</DoctorDescription>
+                    <PaginationButton style={{ background:' #007bff'}} onClick={()=>{naviage('/appointment')}}> Book appointment </PaginationButton>
                   </DoctorCard>
                 ))
               ) : (

@@ -94,8 +94,8 @@ const Header = () => {
 
   const menuItems = [
     { name: 'Back', icon: <FaArrowLeft />, path: '/' },
-    { name: 'update tests', icon: <FaUserMd />, path: '/' },
-    { name: 'update treatments', icon: <FaHeadset />, path: '/' },
+    { name: 'update tests', icon: <FaUserMd />, path: '/deo/test' },
+    { name: 'update treatments', icon: <FaHeadset />, path: '/deo/treatment' },
     
     { name: 'Logout', icon: <FaSignOutAlt />, action: logout },
   ];
@@ -109,7 +109,7 @@ const Header = () => {
             item.action ? (
               <Button
                 key={index}
-                href="#"
+                href=""
                 onClick={(e) => {
                   e.preventDefault();
                   item.action();

@@ -94,9 +94,8 @@ const Header = () => {
 
   const menuItems = [
     { name: 'Back', icon: <FaArrowLeft />, path: '/' },
-    { name: 'Appointments', icon: <FaUserMd />, path: '/' },
-    { name: 'Tests', icon: <FaHeadset />, path: '/' },
-    { name: 'Treatments', icon: <FaKeyboard />, path: '/' },
+    { name: 'Appointments', icon: <FaUserMd />, path: '/patient' },
+    
     { name: 'Logout', icon: <FaSignOutAlt />, action: logout },
   ];
 

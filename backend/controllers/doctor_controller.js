@@ -58,7 +58,7 @@ function  login_doctor(req,res,next)
     }
     try
     { const name=username;
-        connection.query('SELECT password FROM doctor where name=?',[name],async (err,results)=>{
+        connection.query('SELECT * FROM doctor where name=?',[name],async (err,results)=>{
        
             if (err )
             { console.log(err,results);
@@ -76,7 +76,7 @@ function  login_doctor(req,res,next)
                 { 
                     if (await bcrypt.compare(password,results[0].password))
                     {
-                    return res.status(200).json({message:"successful-login",name:name});
+                    return res.status(200).json({message:"successful-login",name:results});
                     }
                     else
                     {
@@ -286,7 +286,7 @@ function get_doctor(req,res,next)
 {
     try {
 
-        connection.query("SELECT name,qualification,experience,department FROM doctor", async (err2, result2) => {
+        connection.query("SELECT name,qualification,experience,department,id FROM doctor", async (err2, result2) => {
             if (err2) 
                 {
                 console.error("Error fetching doctor:", err2);

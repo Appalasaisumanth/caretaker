@@ -227,6 +227,7 @@ function create_table_treatment(req, res, next) {
         } else {
             const createTableQuery = `
             CREATE TABLE ${tableName} (
+            id INT PRIMARY KEY AUTO_INCREMENT,
               aid INT,
               details varchar(100),
               FOREIGN KEY (aid) REFERENCES appointment(aid)
@@ -261,6 +262,7 @@ function create_table_test(req, res, next) {
         } else {
             const createTableQuery = `
             CREATE TABLE ${tableName} (
+            id INT PRIMARY KEY AUTO_INCREMENT,
               aid INT,
               details varchar(100),
               FOREIGN KEY (aid) REFERENCES appointment(aid)

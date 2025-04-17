@@ -49,14 +49,14 @@ async function populate_test(req, res) {
 }
 function  update_test(req,res,next)
 {
-    let {aid,details}=req.body;
-    if (!aid || !details)
+    let {id,details}=req.body;
+    if (!id || !details )
     {
-        return res.status(400).json({message:'aid or details is null'});
+        return res.status(400).json({message:'id or details is null'});
     }
     try
     {
-        connection.query('SELECT details FROM test where aid=?',[aid],async (err,results)=>{
+        connection.query('SELECT details FROM test where id=?',[id],async (err,results)=>{
        
             if (err )
             { console.log(err,results);
@@ -75,7 +75,7 @@ function  update_test(req,res,next)
 
                    
                     
-                    connection.query('UPDATE test set details=? WHERE aid=?;',[details,aid],async (err,results)=>{
+                    connection.query('UPDATE test set details=? WHERE id=?;',[details,id],async (err,results)=>{
                    
                         if (err )
                         { 
@@ -110,22 +110,7 @@ function  create_test(req,res,next)
     }
     try
     {
-        connection.query('SELECT details FROM test where aid=?',[aid],async (err,results)=>{
        
-            if (err )
-            { console.log(err,results);
-                return res.status(400).json({message:'error in retriving data,try some other time', error:results.details});
-
-            }
-            else
-            {
-                if (results.length>0)
-                {
-                    return res.status(400).json({message:'already aid exists update details'});
-
-                }
-                else
-                {
                     connection.query('INSERT INTO test (aid,details) values (?,?);',[aid,details],async (err,results)=>{
                    
                         if (err )
@@ -141,10 +126,8 @@ function  create_test(req,res,next)
 
 
                 }
-            }
-        })
-
-    }
+            
+        
     catch(err)
     {
         console.log("Unexpected error:", err);
@@ -157,11 +140,41 @@ function get_test(req,res,next)
 { const {aid}=req.params;
     if (!aid)
     {
-        return res.status(500).json({ error: "aid is null please provide sppointment id" });
+        return res.status(500).json({ error: "aid is null please provide appointment id" });
     }
     try {
 
-        connection.query("SELECT details FROM test WHERE aid=? ",[aid], async (err2, result2) => {
+        connection.query("SELECT * FROM test WHERE aid=? ",[aid], async (err2, result2) => {
+            if (err2) 
+                {
+                console.error("Error fetching test:", err2);
+                return res.status(500).json({ error: "Failed to fetch tests" });
+            } 
+            if (result2.length > 0) {
+                return res.status(200).json({ message: "all test's list", tests: result2 });
+            }
+            else
+            {
+                return res.status(200).json({ message: "no test's exist" });
+            }
+        });
+    }
+        catch(err)
+        {
+            console.log(err);
+            return res.status(500).json({message:'internal server error,try next time'})
+        }
+}
+
+function get_test_pid(req,res,next)
+{ const {pid}=req.params;
+    if (!pid)
+    {
+        return res.status(500).json({ error: "pid is null please provide appointment id" });
+    }
+    try {
+
+        connection.query("SELECT * FROM test t inner join appointment ap on t.aid=ap.aid WHERE ap.pid=? ",[pid], async (err2, result2) => {
             if (err2) 
                 {
                 console.error("Error fetching test:", err2);
@@ -184,14 +197,14 @@ function get_test(req,res,next)
 }
 
 function delete_test(req,res,next)
-{ const {aid}=req.params;
-    if (!aid)
+{ const {id}=req.params;
+    if (!id)
     {
-        return res.status(500).json({ error: "aid is null please provide sppointment id" });
+        return res.status(500).json({ error: "id is null please provide sppointment id" });
     }
     try {
 
-        connection.query("SELECT * FROM test WHERE aid=? ",[aid], async (err2, result2) => {
+        connection.query("SELECT * FROM test WHERE id=? ",[id], async (err2, result2) => {
             if (err2) 
                 {
                 console.error("Error fetching test:", err2);
@@ -199,7 +212,7 @@ function delete_test(req,res,next)
             } 
             if (result2.length > 0) {
                
-                connection.query('DELETE from test where aid=?',[aid],async (err,results)=>{
+                connection.query('DELETE from test where id=?',[id],async (err,results)=>{
                    
                     if (err )
                     { console.log(err,results);
@@ -230,6 +243,6 @@ module.exports={
     get_test,
     update_test,
     create_test,
-    delete_test
-
+    delete_test,
+    get_test_pid,
 }

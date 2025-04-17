@@ -56,7 +56,7 @@ function  login_patient(req,res,next)
     }
     try
     { const name=username;
-        connection.query('SELECT password FROM patient where name=?',[name],async (err,results)=>{
+        connection.query('SELECT * FROM patient where name=?',[name],async (err,results)=>{
        
             if (err )
             { console.log(err,results);
@@ -74,7 +74,7 @@ function  login_patient(req,res,next)
                 { 
                     if (await bcrypt.compare(password,results[0].password))
                     {
-                    return res.status(200).json({message:"successful-login",name:name});
+                    return res.status(200).json({message:"successful-login",name:results});
                     }
                     else
                     {

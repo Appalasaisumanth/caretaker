@@ -12,13 +12,6 @@ const services = [
   { icon: 'fas fa-ambulance', title: 'Emergency Care', description: '24/7 emergency services with rapid response teams.' },
 ];
 
-// const doctors = [
-//   { name: 'Dr. Emily Carter', specialty: 'General Physician', description: 'Experienced in family medicine with a patient-first approach.' },
-//   { name: 'Dr. Michael Lee', specialty: 'Cardiologist', description: 'Specialist in heart health with over 15 years of experience.' },
-//   { name: 'Dr. Sarah Patel', specialty: 'Radiologist', description: 'Expert in diagnostic imaging and patient care.' },
-// ];
-
-// Styled Components
 const Container = styled.div`
   width: 100%;
   margin: 0;
@@ -370,9 +363,9 @@ const Home = () => {
         <HeaderContainer>
           <Logo>CarePlus Hospital</Logo>
           <Nav>
-            <NavLink href="#home">Home</NavLink>
-            <NavLink href="#services">Services</NavLink>
-            <NavLink href="#doctors">Doctors</NavLink>
+            <NavLink href="/">Home</NavLink>
+            <NavLink href="/login">Login</NavLink>
+            <NavLink href="/doctors">Doctors</NavLink>
             <NavLink href="#contact">Contact</NavLink>
             <Button href="/appointment">Book Appointment</Button>
           </Nav>
@@ -479,7 +472,7 @@ const Home = () => {
             >
               <HeroTitle>Book an Appointment</HeroTitle>
               <HeroDescription>
-                Schedule a visit with our specialists at your convenience. We’re here to provide the care you need, when you need it.
+                Schedule a visit with our specialists at your convenience. We re here to provide the care you need, when you need it.
               </HeroDescription>
               <Button href="/appointment">Make Appointment</Button>
             </HeroText>

@@ -9,7 +9,7 @@ router.post('/populate',populate_appointments);
 router.post('/',get_appointment);
 router.get('/slots/:did',get_slots);
 router.post('/create',book_appointment);
-router.delete('/delete',delete_appointment);
+router.delete('/delete/:aid',delete_appointment);
 router.patch('/update',update_appointment);
 
 module.exports=router;

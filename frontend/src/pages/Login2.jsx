@@ -318,9 +318,15 @@ function Login2() {
 
       if (response.ok) {
         const data = await response.json();
+        console.log(data);
         setIsLoading(false);
         setMessage(`Welcome, ${formData.username}! Redirecting...`);
-        localStorage.setItem('user', `${formData.username}+${formData.role}`);
+        if(formData.role === 'patient' || formData.role === 'doctor'){
+          console.log(data);
+        localStorage.setItem('user', `${data.name[0].name}+${data.name[0].id}+${formData.role}`);
+        }
+        else
+        localStorage.setItem('user',`${formData.username}+${formData.role}`)
         setTimeout(() => {
           navigate('/');
         }, 5000);
@@ -344,9 +350,6 @@ function Login2() {
         transition={{ duration: 0.8, ease: 'easeOut' }}
       >
         <LoginTitle>Welcome to CarePlus</LoginTitle>
-        <Text1>
-          New to CarePlus? <NavLink onClick={() => navigate('/register')}>Register</NavLink>
-        </Text1>
         <Form onSubmit={submitHandler}>
           <ButtonGroup>
             <BackButton

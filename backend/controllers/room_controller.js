@@ -46,7 +46,7 @@ async function populate_room(req, res) {
 async function get_room(req, res) {
     try {
 
-        connection.query("SELECT id FROM room WHERE  end_time IS  NOT NULL ", (err2, result2) => {
+        connection.query("SELECT * FROM room WHERE  end_time IS  NOT NULL OR (pid IS NULL AND end_time IS NULL)", (err2, result2) => {
             if (err2) 
             {
                 console.log("Error fetching rooms:", err2);
@@ -73,6 +73,37 @@ async function get_room(req, res) {
         return res.status(500).json({ error: "Something went wrong" });
     }
 }
+async function get_filled_room(req, res) {
+    try {
+
+        connection.query("SELECT *  FROM room WHERE  end_time IS   NULL AND pid IS NOT NULL ", (err2, result2) => {
+            if (err2) 
+            {
+                console.log("Error fetching rooms:", err2);
+                return res.status(500).json({ error: "Failed to fetch rooms" });
+            }
+            else 
+            {
+                if (result2.length > 0) 
+                    {
+                     return res.status(200).json({ message: "available rooms", rooms: result2 }); 
+                    }
+                else
+                    {
+                        return res.status(400).json({ message: "no rooms avialable" })
+                    }
+            }
+            });
+        }
+
+
+     catch (error) {
+        console.log("Unexpected error:", error);
+        console.log(error);
+        return res.status(500).json({ error: "Something went wrong" });
+    }
+}
+
 async function get_room_by_pid(req, res) {
     const {pid}= req.params;
     try {
@@ -111,8 +142,6 @@ async function get_room_by_pid(req, res) {
 
 async function discharge_room(req, res) {
     const {id} = req.params;
-    
-
     try {
         
 
@@ -120,7 +149,7 @@ async function discharge_room(req, res) {
             if (err2) 
             {
                 console.log("Error fetching rooms:", err2);
-                return res.status(500).json({ error: err2 });
+                return res.status(400).json({ error: err2,message:err2 });
             }
             else 
             {
@@ -193,6 +222,7 @@ module.exports = {
     get_room,
     discharge_room,
     admit_room,
-    get_room_by_pid
+    get_room_by_pid,
+    get_filled_room
 
 }

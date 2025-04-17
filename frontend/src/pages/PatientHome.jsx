@@ -223,7 +223,11 @@ console.log(user.split('+'));
       toast.info(
         <div>
           {tests.length > 0 ? (
-            <p> {tests.details || 'N/A'}</p>
+            <ul>
+            {tests.map((test,index)=>{return (<li key={index}>
+             {test.details}
+            </li>)})}
+          </ul>
           ) : (
             <p>No tests assigned</p>
           )}
@@ -260,10 +264,14 @@ console.log(user.split('+'));
       toast.info(
        <div>
           {treatments.length > 0 ? (
-<p> {treatments.details || 'N/A'}</p>
+<ul>
+  {treatments.map((treatment,index)=>{return (<li key={index}>
+   {treatment.details}
+  </li>)})}
+</ul>
             
           ) : (
-            <p>No tests assigned</p>
+            <p>No treatments assigned</p>
           )}
           
         </div>,

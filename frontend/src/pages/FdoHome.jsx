@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Header from './HeaderFdo';
-import { FaCalendarCheck, FaVial, FaPills } from 'react-icons/fa';
+import { FaStethoscope, FaFileMedical, FaHospital } from 'react-icons/fa'; // Updated icons
 import { Link } from 'react-router-dom';
 
+// Styled components remain unchanged
 const Container = styled.div`
   padding: 1rem;
 `;
@@ -102,23 +103,23 @@ const FdoHome = () => {
     <>
       <Header />
       <Container>
-        <Title>Welcome { 'Fdo'}</Title>
+        <Title>Welcome {user || 'Fdo'}</Title>
         <Description>This is the Fdo dashboard</Description>
         <CardContainer>
-          <Card to="/Fdo" className="doctor-card">
-            <CardIcon><FaCalendarCheck /></CardIcon>
+          <Card to="/appointment" className="doctor-card">
+            <CardIcon><FaStethoscope /></CardIcon>
             <CardTitle>Appointments</CardTitle>
-            <CardText>Make  appointments here</CardText>
+            <CardText>Make appointments here</CardText>
           </Card>
-          <Card to="/Fdo" className="front-desk-card">
-            <CardIcon><FaVial /></CardIcon>
+          <Card to="/fdo/discharge" className="front-desk-card">
+            <CardIcon><FaFileMedical /></CardIcon>
             <CardTitle>Discharge</CardTitle>
-            <CardText>Check for your Discharge </CardText>
+            <CardText>Check for your Discharge</CardText>
           </Card>
-          <Card to="/Fdo" className="data-entry-card">
-            <CardIcon><FaPills /></CardIcon>
-            <CardTitle>Treatments</CardTitle>
-            <CardText>Check for your treatments</CardText>
+          <Card to="/fdo/allocate" className="data-entry-card">
+            <CardIcon><FaHospital /></CardIcon>
+            <CardTitle>Allocate room</CardTitle>
+            <CardText>Allocate room for patient</CardText>
           </Card>
         </CardContainer>
       </Container>

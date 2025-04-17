@@ -105,7 +105,7 @@ const DeoHome = () => {
         <Title>Welcome { 'Deo'}</Title>
         <Description>This is the Deo dashboard</Description>
         <CardContainer>
-          <Card to="/Deo" className="doctor-card">
+          <Card to="/deo/test" className="doctor-card">
             <CardIcon><FaCalendarCheck /></CardIcon>
             <CardTitle>update tests</CardTitle>
             <CardText>update and create  test results  here</CardText>
@@ -115,7 +115,7 @@ const DeoHome = () => {
             <CardTitle>Discharge</CardTitle>
             <CardText>Check for your Discharge </CardText>
           </Card> */}
-          <Card to="/Deo" className="data-entry-card">
+          <Card to="/deo/treatment" className="data-entry-card">
             <CardIcon><FaPills /></CardIcon>
             <CardTitle>update treatment </CardTitle>
             <CardText>update and create treatment details</CardText>

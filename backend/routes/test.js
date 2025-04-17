@@ -4,7 +4,7 @@ const {populate_test,get_test,update_test,create_test,delete_test,get_test_pid}=
 router.post('/populate',populate_test);
 router.get('/:aid',get_test);
 router.patch('/update',update_test);
-router.delete('/delete/:aid',delete_test);
+router.delete('/delete/:id',delete_test);
 router.post('/create',create_test);
 router.get('/by_pid/:pid',get_test_pid)
 module.exports = router;

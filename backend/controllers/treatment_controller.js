@@ -151,7 +151,7 @@ function get_treatment(req,res,next)
                 return res.status(500).json({ error: "Failed to fetch treatments" });
             } 
             if (result2.length > 0) {
-                return res.status(200).json({ message: "all treatment's list", treatments: result2 });
+                return res.status(200).json({ message: "all treatment's list", tests: result2 });
             }
             else
             {
@@ -181,7 +181,7 @@ function get_treatment_pid(req,res,next)
                 return res.status(500).json({ error: "Failed to fetch treatments" });
             } 
             if (result2.length > 0) {
-                return res.status(200).json({ message: "all treatment's list", treatments: result2 });
+                return res.status(200).json({ message: "all treatment's list", tests: result2 });
             }
             else
             {

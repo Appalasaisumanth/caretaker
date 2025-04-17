@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { FaEye, FaEdit, FaTrash, FaUserMd } from 'react-icons/fa';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { GetAppointmentsRoute,DeleteDoctorRoute,DoctorupdateRoute } from '../APIRoutes/APIRoutes';
+import { GetAppointmentsRoute, DeleteDoctorRoute, DoctorupdateRoute } from '../APIRoutes/APIRoutes';
 
 // Styled components (unchanged except for modal additions)
 const Container = styled.div`
@@ -73,7 +73,6 @@ const Table = styled.table`
 const TableHead = styled.thead`
   background: #007bff;
   color: white;
-  width:200%;
 `;
 
 const TableRow = styled.tr`
@@ -81,13 +80,18 @@ const TableRow = styled.tr`
     background: #f8f9fa;
   }
 `;
+const Test_details=styled.p`
+overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  width: '100px'
+`
 
 const TableHeader = styled.th`
   padding: 1rem;
   font-size: 1.1rem;
   font-weight: 600;
   text-align: left;
-   
 
   @media (max-width: 768px) {
     padding: 0.75rem;
@@ -120,7 +124,6 @@ const ActionButton = styled.button`
   }
 `;
 
-// Modal styled components
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -167,6 +170,7 @@ const Input = styled.input`
     border-color: #007bff;
   }
 `;
+
 const Select = styled.select`
   width: 100%;
   padding: 0.9rem 1.2rem;
@@ -204,28 +208,35 @@ const Button = styled.button`
   }
 `;
 
+
+
 const ButtonGroup = styled.div`
   display: flex;
   gap: 1rem;
   justify-content: flex-end;
 `;
 
-const AdminDoctor = () => {
-
-  const [appointments, setappointments] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const AdminDoctor = ({ GetRoute, DeleteRoute, UpdateRoute, CreateRoute, msg }) => {
+  const [appointments, setAppointments] = useState([]);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false); // For Create modal
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false); // For Update modal
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [formData, setFormData] = useState({
     aid: 0,
-    details:''
+    details: '',
   });
-  const modalRef = useRef(null);
+  const [testFormData, setTestFormData] = useState({
+    id: 0,
+    details: '',
+  });
+  const [testsByAppointment, setTestsByAppointment] = useState({});
+  const createModalRef = useRef(null);
+  const updateModalRef = useRef(null);
   const currentDate = new Date(Date.now()).toISOString();
-
 
   // Fetch appointments from API
   useEffect(() => {
-    const get_appointments = async () => {
+    const getAppointments = async () => {
       try {
         const response = await fetch(GetAppointmentsRoute, {
           method: 'POST',
@@ -236,7 +247,11 @@ const AdminDoctor = () => {
 
         if (response.ok) {
           const data = await response.json();
-          setappointments(data.appointments.filter((app)=>app.appointment_date+"T"+app.appointment_time<currentDate));
+          setAppointments(
+            data.appointments.filter(
+              app => app.appointment_date + 'T' + app.appointment_time < currentDate
+            )
+          );
         } else {
           const data = await response.json();
           alert(data.message || 'Getting appointments failed');
@@ -246,22 +261,63 @@ const AdminDoctor = () => {
         alert('Something went wrong. Please try again.');
       }
     };
-    get_appointments();
+    getAppointments();
   }, []);
 
-  const handleDelete = async (username) => {
-    if (window.confirm(`Are you sure you want to delete doctor with name: ${username}?`)) {
+  // Fetch tests for all appointments
+  useEffect(() => {
+    const getTests = async (aid) => {
       try {
-        const response = await fetch(`${DeleteDoctorRoute}/${username}`, {
-          method: 'DELETE',
+        const response = await fetch(`${GetRoute}/${aid}`, {
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
           },
         });
+
+        if (response.ok) {
+          const data = await response.json();
+          return data.tests || [];
+        } else {
+          const data = await response.json();
+          toast.error(data.message || 'Failed to fetch tests');
+          return [];
+        }
+      } catch (err) {
+        console.error(err);
+        toast.error('Something went wrong while fetching tests.');
+        return [];
+      }
+    };
+
+    const fetchAllTests = async () => {
+      const newTestsByAppointment = {};
+      for (let i = 0; i < appointments.length; i++) {
+        const { aid } = appointments[i];
+        const tests = await getTests(aid);
+        newTestsByAppointment[aid] = tests;
+      }
+      setTestsByAppointment(newTestsByAppointment);
+    };
+
+    if (appointments.length > 0) {
+      fetchAllTests();
+    }
+  }, [appointments]);
+
+  console.log(testsByAppointment);
+
+  const handleDelete = async (id) => {
+    if (window.confirm(`Are you sure you want to delete test: ${id}?`)) {
+      try {
+        const response = await fetch(`${DeleteRoute}/${id}`, {
+          method: 'DELETE',
+          
+        });
         if (response.ok) {
           const data = await response.json();
           alert(data.message);
-          setappointments(appointments.filter(doctor => doctor.name !== username));
+         
         } else {
           const data = await response.json();
           toast.error(data.message);
@@ -273,204 +329,265 @@ const AdminDoctor = () => {
     }
   };
 
-  const handleView = (doctor) => {
-    console.log('handleView called for:', doctor);
-    toast.info(
-      <div>
-        <strong>Doctor Details</strong>
-        <p>Name: {doctor.name}</p>
-        <p>Department: {doctor.department}</p>
-        <p>Qualification: {doctor.qualification}</p>
-        <p>Experience: {doctor.experience}</p>
-      </div>,
-      {
-        position: 'top-center',
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'colored',
-      }
-    );
-  };
-
-  const handleUpdate = (doctor) => {
-    setSelectedDoctor(doctor);
+  const handleCreate = (doctor) => {
     setFormData({
       aid: doctor.aid || 99,
-      details:doctor.details|| ''
-     
+      details: doctor.details || '',
     });
-    setIsModalOpen(true);
+    setIsCreateModalOpen(true);
   };
 
-  const handleCancel = () => {
-    setIsModalOpen(false);
+  const handleUpdate = (test) => {
+    setTestFormData({
+      id: test.id || 99,
+      details: test.details || '',
+    });
+    setIsUpdateModalOpen(true);
+  };
+
+  const handleCreateCancel = () => {
+    setIsCreateModalOpen(false);
     setSelectedDoctor(null);
     setFormData({
-      
-      username: '',
-      department: '',
-      qualification: '',
-      experience: 0,
-      role: '',
+      aid: 0,
+      details: '',
     });
   };
 
-  const handleOk = async (e) => {
+  const handleUpdateCancel = () => {
+    setIsUpdateModalOpen(false);
+    setTestFormData({
+      id: 0,
+      details: '',
+    });
+  };
+
+  const handleCreateOk = async (e) => {
     e.preventDefault();
-    console.log('Updating doctor:', formData);
-   
-    
     try {
-      const response = await fetch(DoctorupdateRoute, {
-        method: 'PATCH',
+      const response = await fetch(CreateRoute, {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
       if (response.ok) {
         const data = await response.json();
         toast.success(data.message);
-        
-        setappointments(appointments.map((doctor) =>
-          doctor.username === formData.username ? formData : doctor
-        ));
-       
       } else {
         const data = await response.json();
-      
         toast.error(data.message);
       }
     } catch (error) {
-      console.log(error)
-      toast.error('Error updating doctor');
+      console.log(error);
+      toast.error('Error creating appointment');
     }
-    
-    setIsModalOpen(false);
-    setSelectedDoctor(null);
+    setIsCreateModalOpen(false);
   };
 
-  const handleChange = (e) => {
+  const handleUpdateOk = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`${UpdateRoute}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(testFormData),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        toast.success(data.message);
+        // Optionally refresh tests
+        const updatedTests = await fetch(`${GetRoute}/${testFormData.aid}`);
+        if (updatedTests.ok) {
+          const updatedData = await updatedTests.json();
+          setTestsByAppointment(prev => ({
+            ...prev,
+            [testFormData.aid]: updatedData.tests,
+          }));
+        }
+      } else {
+        const data = await response.json();
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error('Error updating test');
+    }
+    setIsUpdateModalOpen(false);
+  };
+
+  const handleCreateChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === 'experience' ? parseInt(value) || 0 : value,
+      [name]: value,
+    }));
+  };
+
+  const handleUpdateChange = (e) => {
+    const { name, value } = e.target;
+    setTestFormData((prev) => ({
+      ...prev,
+      [name]: value,
     }));
   };
 
   // Focus modal on open
   useEffect(() => {
-    if (isModalOpen && modalRef.current) {
-      modalRef.current.focus();
+    if (isCreateModalOpen && createModalRef.current) {
+      createModalRef.current.focus();
     }
-  }, [isModalOpen]);
+    if (isUpdateModalOpen && updateModalRef.current) {
+      updateModalRef.current.focus();
+    }
+  }, [isCreateModalOpen, isUpdateModalOpen]);
 
   return (
-    <>
+    <Container>
+      <ContentContainer>
+        <HeaderSection>
+          <Title>Manage {msg} </Title>
+        </HeaderSection>
 
-      <Container>
-        <ContentContainer>
-          <HeaderSection>
-            <Title>Manage appointments</Title>
-            <AddButton to="/admin/add">
-              <FaUserMd /> Add New Doctor
-            </AddButton>
-          </HeaderSection>
-
-          {appointments.length === 0 ? (
-            "No doctor registered"
-          ) : (
-            <TableWrapper>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableHeader>patient name</TableHeader>
-                    <TableHeader>doctor name</TableHeader>
-                    <TableHeader>time</TableHeader>
-                    <TableHeader>Date</TableHeader>
-                    <TableHeader>Actions</TableHeader>
+        {appointments.length === 0 ? (
+          "No doctor registered"
+        ) : (
+          <TableWrapper>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableHeader>Patient Name</TableHeader>
+                  <TableHeader>Doctor Name</TableHeader>
+                  <TableHeader>Tests</TableHeader>
+                  <TableHeader>Actions</TableHeader>
+                </TableRow>
+              </TableHead>
+              <tbody>
+                {appointments.map((doctor) => (
+                  <TableRow key={doctor.aid}>
+                    <TableCell>{doctor.pname}</TableCell>
+                    <TableCell>{doctor.dname}</TableCell>
+                    <TableCell>
+                      {(!testsByAppointment[doctor.aid] ||
+                        testsByAppointment[doctor.aid].length === 0) ? (
+                        <div>No {msg} available</div>
+                      ) : (
+                        <div>
+                          <ul>
+                            {testsByAppointment[doctor.aid].map((test) => (
+                              <li style={{display:'flex'}} key={test.id}>
+                                <Test_details>{test.details}</Test_details>
+                                <ActionButton
+                                  color="#48bb78"
+                                  hoverColor="#2f855a"
+                                  onClick={() => handleUpdate(test)}
+                                  title="Update"
+                                >
+                                  <FaEdit />
+                                </ActionButton>
+                                <ActionButton
+                                  color="#ed8936"
+                                  hoverColor="#dd6b20"
+                                  onClick={() => handleDelete(test.id)}
+                                  title="Delete"
+                                >
+                                  <FaTrash />
+                                </ActionButton>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <ActionButton
+                        color="#48bb78"
+                        hoverColor="#2f855a"
+                        onClick={() => handleCreate(doctor)}
+                        title="Create"
+                      >
+                        <FaEdit />
+                      </ActionButton>
+                    </TableCell>
                   </TableRow>
-                </TableHead>
-                <tbody>
-                  {appointments.map((doctor) => (
-                    <TableRow key={doctor.aid}>
-                      <TableCell>{doctor.pname}</TableCell>
-                      <TableCell>{doctor.dname }</TableCell>
-                      <TableCell>{doctor.appointment_time || 'N/A'}</TableCell>
-                      <TableCell>{doctor.appointment_date || 'N/A'}</TableCell>
-                      <TableCell>
-                        <ActionButton
-                          color="#007bff"
-                          hoverColor="#0056b3"
-                          onClick={() => handleView(doctor)}
-                          title="View Details"
-                        >
-                          <FaEye />
-                        </ActionButton>
-                        <ActionButton
-                          color="#48bb78"
-                          hoverColor="#2f855a"
-                          onClick={() => handleUpdate(doctor)}
-                          title="Update"
-                        >
-                          <FaEdit />
-                        </ActionButton>
-                        <ActionButton
-                          color="#ed8936"
-                          hoverColor="#dd6b20"
-                          onClick={() => handleDelete(doctor.aid)}
-                          title="Delete"
-                        >
-                          <FaTrash />
-                        </ActionButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </tbody>
-              </Table>
-            </TableWrapper>
-          )}
+                ))}
+              </tbody>
+            </Table>
+          </TableWrapper>
+        )}
 
-          {/* Modal for updating doctor */}
-          {isModalOpen && (
-            <ModalOverlay>
-              <ModalContent tabIndex={-1} ref={modalRef}>
-                <ModalHeader>Update Doctor</ModalHeader>
-                <Form onSubmit={handleOk}>
-                <label for='aid'> appointment id</label>
-                  <Input
-                    type="number"
-                    name="aid"
-                    value={formData.aid}
-                    onChange={handleChange}
-                    placeholder="Doctor Name"
-                    disabled
-                  />
-                  <label for='details'> details</label>
-                  <Input
-                    type="text"
-                    name="details"
-                    value={formData.details}
-                    onChange={handleChange}
-                    placeholder=""
-                    required
-                  />
-                  <ButtonGroup>
-                    <Button type="button" cancel onClick={handleCancel}>
-                      Cancel
-                    </Button>
-                    <Button type="submit">OK</Button>
-                  </ButtonGroup>
-                </Form>
-              </ModalContent>
-            </ModalOverlay>
-          )}
-        </ContentContainer>
+        {/* Create Modal */}
+        {isCreateModalOpen && (
+          <ModalOverlay>
+            <ModalContent tabIndex={-1} ref={createModalRef}>
+              <ModalHeader>Create {msg}</ModalHeader>
+              <Form onSubmit={handleCreateOk}>
+                <label htmlFor="aid">Appointment ID</label>
+                <Input
+                  type="number"
+                  name="aid"
+                  value={formData.aid}
+                  onChange={handleCreateChange}
+                  placeholder="Appointment ID"
+                  disabled
+                />
+                <label htmlFor="details">Details</label>
+                <Input
+                  type="text"
+                  name="details"
+                  value={formData.details}
+                  onChange={handleCreateChange}
+                  placeholder="Test Details"
+                  required
+                />
+                <ButtonGroup>
+                  <Button type="button" cancel onClick={handleCreateCancel}>
+                    Cancel
+                  </Button>
+                  <Button type="submit">OK</Button>
+                </ButtonGroup>
+              </Form>
+            </ModalContent>
+          </ModalOverlay>
+        )}
+
+        {/* Update Modal */}
+        {isUpdateModalOpen && (
+          <ModalOverlay>
+            <ModalContent tabIndex={-1} ref={updateModalRef}>
+              <ModalHeader>Update Test</ModalHeader>
+              <Form onSubmit={handleUpdateOk}>
+                <label htmlFor="id">{msg} ID</label>
+                <Input
+                  type="number"
+                  name="id"
+                  value={testFormData.id}
+                  onChange={handleUpdateChange}
+                  placeholder="Test ID"
+                  disabled
+                />
+                <label htmlFor="details">Details</label>
+                <Input
+                  type="text"
+                  name="details"
+                  value={testFormData.details}
+                  onChange={handleUpdateChange}
+                  placeholder="Test Details"
+                  required
+                />
+                <ButtonGroup>
+                  <Button type="button" cancel onClick={handleUpdateCancel}>
+                    Cancel
+                  </Button>
+                  <Button type="submit">OK</Button>
+                </ButtonGroup>
+              </Form>
+            </ModalContent>
+          </ModalOverlay>
+        )}
+
         <ToastContainer />
-      </Container>
-    </>
+      </ContentContainer>
+    </Container>
   );
 };
 

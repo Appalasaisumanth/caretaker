@@ -144,7 +144,7 @@ function get_test(req,res,next)
     }
     try {
 
-        connection.query("SELECT * FROM test WHERE aid=? ",[aid], async (err2, result2) => {
+        connection.query("SELECT * FROM test  WHERE aid=? ",[aid], async (err2, result2) => {
             if (err2) 
                 {
                 console.error("Error fetching test:", err2);
@@ -166,6 +166,35 @@ function get_test(req,res,next)
         }
 }
 
+function get_test(req,res,next)
+{ const {aid}=req.params;
+    if (!aid)
+    {
+        return res.status(500).json({ error: "aid is null please provide appointment id" });
+    }
+    try {
+
+        connection.query("SELECT * FROM test WHERE aid=? ",[aid], async (err2, result2) => {
+            if (err2) 
+                {
+                console.error("Error fetching test:", err2);
+                return res.status(500).json({ error: "Failed to fetch tests" });
+            } 
+            if (result2.length > 0) {
+                return res.status(200).json({ message: "all test's list", tests: result2 });
+            }
+            else
+            {
+                return res.status(200).json({ message: "no test's exist" });
+            }
+        });
+    }
+        catch(err)
+        {
+            console.log(err);
+            return res.status(500).json({message:'internal server error,try next time'})
+        }
+}
 function get_test_pid(req,res,next)
 { const {pid}=req.params;
     if (!pid)

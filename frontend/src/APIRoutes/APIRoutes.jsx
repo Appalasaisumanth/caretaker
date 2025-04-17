@@ -37,8 +37,22 @@ export const BookAppointment = `${host}/appointment/create`
 
 export const GetTestsRoute=`${host}/test`
 export const GetTreatmentsRoute=`${host}/treatment`
+export const CreateTestsRoute=`${host}/test/create`
+export const CreateTreatmentsRoute=`${host}/treatment/create`
+export const UpdateTestsRoute=`${host}/test/update`
+export const UpdateTreatmentsRoute=`${host}/treatment/update`
+
+export const DeleteTestsRoute=`${host}/test/delete`
+export const DeleteTreatmentsRoute=`${host}/treatment/delete`
+
+
+
 export const DeleteAppointmentRoute=`${host}/appointment/delete`
 
 
+export const AvailableRoomRoute=`${host}/room/available`
+export const DischargeRoomRoute=`${host}/room/discharge`
+export const AdmitRoomRoute=`${host}/room/adimt`
+export const FilledRoomRoute =`${host}/room/filled`
 
 

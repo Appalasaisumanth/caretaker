@@ -335,6 +335,68 @@ const name=username;
             return res.status(500).json({message:'internal server error,try next time'})
         }
 }
+
+
+
+function get_doctor_prevappointments(req,res,next)
+{ const {id}=req.params;
+const uid=id;
+    try {
+
+        connection.query("SELECT *  FROM doctor d inner join appointment a on a.pid=d.id  where d.id=? AND a.remarks IS NOT NULL AND a.remarks != ''",[uid], async (err2, result2) => {
+            
+            if (err2) 
+                {
+                console.error("Error fetching appointments:", err2);
+                return res.status(500).json({ error: "Failed to fetch doctors" });
+            } 
+            if (result2.length > 0) {
+                return res.status(200).json({ message: "doctor", doctors: result2[0] });
+            }
+            else
+            {
+                return res.status(200).json({ message: "this usernmaed doctor does not exist" });
+            }
+        });
+    }
+        catch(err)
+        {
+            console.log(err);
+            return res.status(500).json({message:'internal server error,try next time'})
+        }
+}
+
+function get_doctor_upcappointments(req,res,next)
+{ const {id}=req.params;
+const uid=id;
+    try {
+
+        connection.query("SELECT *  FROM doctor d inner join appointment a on a.pid=d.id  where d.id=? AND a.remarks IS NULL",[uid], async (err2, result2) => {
+            
+            if (err2) 
+                {
+                console.error("Error fetching appointments:", err2);
+                return res.status(500).json({ error: "Failed to fetch doctors" });
+            } 
+            if (result2.length > 0) {
+                return res.status(200).json({ message: "doctor", doctors: result2[0] });
+            }
+            else
+            {
+                return res.status(200).json({ message: "this usernmaed doctor does not exist" });
+            }
+        });
+    }
+        catch(err)
+        {
+            console.log(err);
+            return res.status(500).json({message:'internal server error,try next time'})
+        }
+}
+
+
+
+
 function get_doctor_by_department(req,res,next)
 { const {department}=req.params;
 
@@ -401,5 +463,7 @@ module.exports =
     get_doctor,
     get_doctor_by_username,
     get_doctor_by_department,
+    get_doctor_prevappointments,
+    get_doctor_upcappointments,
     get_depts,
 }

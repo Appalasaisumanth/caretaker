@@ -56,3 +56,13 @@ export const AdmitRoomRoute=`${host}/room/adimt`
 export const FilledRoomRoute =`${host}/room/filled`
 
 
+
+export const GetPrevAppointments =`${host}/doctor/prevappoints`
+export const GetUpcAppointments =`${host}/doctor/upcoappoints`
+
+
+
+
+
+
+

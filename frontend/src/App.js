@@ -16,6 +16,9 @@ import DeoTests from './pages/DeoTests';
 import DeoTreatments from './pages/DeoTreatments';
 import FdoAllocate from './pages/FdoAllocate';
 import FdoDischarge from './pages/FdoDischarge';
+import DoctorHome from './pages/DoctorHome';
+import DoctorPrevAppointments from './pages/PatientHome';
+import DoctorUpcAppointments from './pages/DoctorUpcomAppointments';
 
 function App() {
   return (
@@ -30,8 +33,10 @@ function App() {
         <Route path ='/admin/deo' element={<AdminDeo/>}/>
         <Route path ='/admin/add' element={<AddOperator/>}/>
         <Route path ='/doctors' element={<Doctors/>}/>
+        <Route path ='/doctorh' element={<DoctorHome/>}/>
+        <Route path ='/doctorh/prevappointment' element={<DoctorPrevAppointments/>}/>
+        <Route path ='/doctorh/upcomappointment' element={<DoctorUpcAppointments/>}/>
         <Route path ='/patient' element={<PatientHome/>}/>
-       
         <Route path ='/deo' element={<DeoHome/>}/>
         <Route path ='/deo/test' element={<DeoTests/>}/>
         <Route path ='/deo/treatment' element={<DeoTreatments/>}/>
@@ -39,6 +44,7 @@ function App() {
         <Route path ='/appointment' element={<MakeAppointment/>}/>
         <Route path ='/fdo/allocate' element={<FdoAllocate/>}/>
         <Route path ='/fdo/discharge' element={<FdoDischarge/>}/>
+
         
 
       </Routes>

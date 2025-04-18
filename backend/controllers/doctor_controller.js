@@ -341,9 +341,10 @@ const name=username;
 function get_doctor_prevappointments(req,res,next)
 { const {id}=req.params;
 const uid=id;
+const date=new Date(Date.now());
     try {
 
-        connection.query("SELECT *  FROM doctor d inner join appointment a on a.pid=d.id  where d.id=? AND a.remarks IS NOT NULL AND a.remarks != ''",[uid], async (err2, result2) => {
+        connection.query("SELECT *  FROM doctor d inner join appointment a on a.pid=d.id  where d.id=? AND a.appointment_time<?",[uid,date], async (err2, result2) => {
             
             if (err2) 
                 {
@@ -369,9 +370,10 @@ const uid=id;
 function get_doctor_upcappointments(req,res,next)
 { const {id}=req.params;
 const uid=id;
+const date=new Date(Date.now());
     try {
 
-        connection.query("SELECT *  FROM doctor d inner join appointment a on a.pid=d.id  where d.id=? AND a.remarks IS NULL",[uid], async (err2, result2) => {
+        connection.query("SELECT *  FROM doctor d inner join appointment a on a.pid=d.id  where d.id=? AND a.appointment_date>=?",[uid,date], async (err2, result2) => {
             
             if (err2) 
                 {
@@ -379,11 +381,11 @@ const uid=id;
                 return res.status(500).json({ error: "Failed to fetch doctors" });
             } 
             if (result2.length > 0) {
-                return res.status(200).json({ message: "doctor", doctors: result2[0] });
+                return res.status(200).json({ message: "doctor", doctors: result2 });
             }
             else
             {
-                return res.status(200).json({ message: "this usernmaed doctor does not exist" });
+                return res.status(200).json({ message: "this usernmaed doctor does not have appointments" });
             }
         });
     }

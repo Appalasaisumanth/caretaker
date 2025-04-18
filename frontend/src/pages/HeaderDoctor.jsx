@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaSignOutAlt, FaUserMd, FaHeadset, FaKeyboard, FaArrowLeft } from 'react-icons/fa';
+import { FaArrowLeft, FaHistory, FaCalendarAlt, FaSignOutAlt } from 'react-icons/fa';
 import styled from 'styled-components';
 
 // Styled components for Header
-const HeaderStyle= styled.header`
+const HeaderStyle = styled.header`
   background: linear-gradient(135deg, #007bff, #005bb5);
   color: white;
   padding: 1.5rem 0;
@@ -94,8 +94,8 @@ const Header = () => {
 
   const menuItems = [
     { name: 'Back', icon: <FaArrowLeft />, path: '/' },
-    { name: 'View Previous Appointments', icon: <FaUserMd />, path: '/doctorh/prevapo' },
-    { name: 'View Upcoming Appointments', icon: <FaUserMd />, path: '/doctorh/upcomapo' },
+    // { name: 'View Previous Appointments', icon: <FaHistory />, path: '/doctorh/prevapo' },
+    // { name: 'View Upcoming Appointments', icon: <FaCalendarAlt />, path: '/doctorh/upcomapo' },
     { name: 'Logout', icon: <FaSignOutAlt />, action: logout },
   ];
 

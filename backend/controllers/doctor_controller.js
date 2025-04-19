@@ -369,18 +369,23 @@ const date=new Date(Date.now());
 
 function get_doctor_upcappointments(req,res,next)
 { const {id}=req.params;
+console.log(id);
 const uid=id;
 const date=new Date(Date.now());
+console.log(date);
     try {
 
-        connection.query("SELECT *  FROM doctor d inner join appointment a on a.pid=d.id  where d.id=? AND a.appointment_date>=?",[uid,date], async (err2, result2) => {
-            
+
+        // connection.query("SELECT *  FROM doctor d INNER JOIN appointment a ON a.pid = d.id  WHERE d.id = ? AND CONCAT(a.appointment_date, ' ', a.appointment_time) > ?",[uid,date], async (err2, result2) => {
+        connection.query("SELECT *  FROM doctor d INNER JOIN appointment a ON a.pid = d.id  WHERE d.id = ?",[uid], async (err2, result2) => {
+            console.log(result2);
             if (err2) 
                 {
                 console.error("Error fetching appointments:", err2);
                 return res.status(500).json({ error: "Failed to fetch doctors" });
             } 
             if (result2.length > 0) {
+                
                 return res.status(200).json({ message: "doctor", doctors: result2 });
             }
             else

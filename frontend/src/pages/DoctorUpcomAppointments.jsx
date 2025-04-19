@@ -42,27 +42,35 @@ const Description = styled.p`
 
 const DoctorUpcAppointments = () => {
   const [user, setUser] = useState('');
-  const [did, setDid] = useState(0);
+  const [did, setDid] = useState();
   const [appointments, setAppointments] = useState([]);
   const navigate = useNavigate();
+  useEffect(()=>{
+    let userData = localStorage.getItem('user') || 'Fdo+0+doctor';
+    const [username, id, role] = userData.split('+');
+    console.log(userData);
+    setUser(username);
+    setDid(id);
+    console.log('outside the async'+did);
+  },[])
 
   // Fetch user and upcoming appointments
   useEffect(() => {
     // Set user from localStorage
-    let userData = localStorage.getItem('user') || 'Fdo+0+doctor';
-    const [username, id, role] = userData.split('+');
-    setUser(username);
-    setDid(id || 0);
+
 
     // Fetch upcoming appointments
     const getAppointments = async () => {
       try {
-        const response = await fetch(`${GetUpcAppointments}/${id}`, {
+        console.log(did);
+        if(did){
+        const response = await fetch(`${GetUpcAppointments}/${did}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
           },
         });
+      
 
         if (response.ok) {
           const data = await response.json();
@@ -76,16 +84,17 @@ const DoctorUpcAppointments = () => {
           const data = await response.json();
           toast.error(data.message || 'Failed to fetch appointments');
         }
+      }
       } catch (err) {
         console.error(err);
         toast.error('Something went wrong. Please try again.');
       }
     };
 
-    if (id) {
+    if (did) {
       getAppointments();
     }
-  }, []);
+  }, [did]);
 
   // Handle view tests
   const handleViewTest = async (appointment_id) => {

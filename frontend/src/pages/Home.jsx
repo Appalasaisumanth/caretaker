@@ -2,6 +2,7 @@ import {React,useEffect,useState} from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import img3 from '../images/imgg3.jpg';
+import imgappoint from '../images/imageappoint.jpg'
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { GetDoctorsRoute } from '../APIRoutes/APIRoutes';
 // Sample data for dynamic sections
@@ -88,6 +89,11 @@ const Button = styled.a`
 `;
 
 const Section = styled.section`
+  padding: 5rem 0;
+  height: auto;
+  background: ${props => props.bg || 'white'};
+`;
+const Contactsection =styled.section`
   padding: 5rem 0;
   background: ${props => props.bg || 'white'};
 `;
@@ -477,7 +483,7 @@ const Home = () => {
               <Button href="/appointment">Make Appointment</Button>
             </HeroText>
             <HeroImage
-              src="https://via.placeholder.com/400x300"
+              src= {imgappoint}
               alt="Appointment"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -488,7 +494,7 @@ const Home = () => {
       </Section>
 
       {/* CONTACT SECTION */}
-      <Section id="contact" bg="linear-gradient(135deg, #007bff, #005bb5)">
+      <Contactsection id="contact" bg="linear-gradient(135deg, #007bff, #005bb5)">
         <SectionContainer>
           <SectionTitle
             initial="hidden"
@@ -517,7 +523,7 @@ const Home = () => {
             </ContactItem>
           </ContactGrid>
         </SectionContainer>
-      </Section>
+      </Contactsection>
 
       {/* FOOTER */}
       <Footer>

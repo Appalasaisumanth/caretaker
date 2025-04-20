@@ -19,7 +19,7 @@ import FdoDischarge from './pages/FdoDischarge';
 import DoctorHome from './pages/DoctorHome';
 import DoctorPrevAppointments from './pages/DoctorPrevAppointments';
 import DoctorUpcAppointments from './pages/DoctorUpcomAppointments';
-
+import Register from './pages/Register';
 function App() {
   return (
     <BrowserRouter>
@@ -27,6 +27,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path ='/forgot_password' element={<ForgotPassword/>} />
+        <Route path ='/register' element ={< Register/>}/>
         <Route path ='/admin' element={<AdminHome/>}/>
         <Route path ='/admin/doctor' element={<AdminDoctor/>}/>
         <Route path ='/admin/fdo' element={<AdminFdo/>}/>

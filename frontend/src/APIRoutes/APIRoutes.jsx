@@ -7,6 +7,7 @@ export const DeologinRoute = `${host}/deo/login`
 export const FdologinRoute = `${host}/fdo/login`
 export const PatientloginRoute = `${host}/patient/login`
 
+export const PatientRegisterROute =`${host}/patient/register`
 
 export const AdminupdateRoute = `${host}/admin/update`
 export const DoctorupdateRoute= `${host}/doctor/update`

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Header from './HeaderFdo';
 import { useNavigate } from 'react-router-dom';
-import { FaStethoscope, FaFileMedical, FaHospital } from 'react-icons/fa'; // Updated icons
+import { FaStethoscope, FaFileMedical, FaHospital, FaUser, FaUserMd } from 'react-icons/fa'; // Updated icons
 import { Link } from 'react-router-dom';
 
 // Styled components remain unchanged
@@ -107,7 +107,7 @@ const FdoHome = () => {
     }
     else{
     const [username, id, role] = userData.split('+');
-    if(role!=`fdo`){
+    if(role!==`fdo`){
       navigate('/login');
     }
     setUser(username);
@@ -132,6 +132,11 @@ const FdoHome = () => {
         <Title>Welcome {user || 'Fdo'}</Title>
         <Description>This is the Fdo dashboard</Description>
         <CardContainer>
+        <Card to="/register" className="doctor-card">
+            <CardIcon><FaUserMd /></CardIcon>
+            <CardTitle>new patient</CardTitle>
+            <CardText>add new patients here</CardText>
+          </Card>
           <Card to="/appointment" className="doctor-card">
             <CardIcon><FaStethoscope /></CardIcon>
             <CardTitle>Appointments</CardTitle>

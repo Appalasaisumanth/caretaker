@@ -322,7 +322,7 @@ console.log(user.split('+'));
         <ContentContainer>
           <Title>Welcome, {user}</Title>
           <Description>Manage your appointments and access healthcare services.</Description>
-<AppointmentsCard id='#appointments' appointments={appointments} handleViewTest={handleViewTest} handleViewDoctor={handleViewDoctor} handleViewTreatment={handleViewTreatment} 
+<AppointmentsCard id='#appointments' appointments={appointments} handleViewTest={handleViewTest} handleViewPatient={handleViewDoctor} handleViewTreatment={handleViewTreatment} 
 valid={false}/>
 
 

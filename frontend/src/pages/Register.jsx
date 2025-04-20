@@ -6,18 +6,8 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import Loader from '../assets/Loader'; // Ensure the path is correct
-import { PatientloginRoute, AdminloginRoute, DoctorloginRoute, DeologinRoute, FdologinRoute } from '../APIRoutes/APIRoutes';
+import { PatientloginRoute, AdminloginRoute, DoctorloginRoute, DeologinRoute, FdologinRoute,PatientRegisterROute } from '../APIRoutes/APIRoutes';
 
-// Roles array for dropdown
-const roles = [
-  { value: 'patient', label: 'Patient', route: PatientloginRoute },
-  { value: 'doctor', label: 'Doctor', route: DoctorloginRoute },
-  { value: 'fdo', label: 'FDO', route: FdologinRoute },
-  { value: 'deo', label: 'DEO', route: DeologinRoute },
-  { value: 'admin', label: 'Admin', route: AdminloginRoute },
-];
-
-// Styled Components
 const LoginContainer = styled.div`
   height: 100vh;
   width: 100vw;
@@ -247,9 +237,9 @@ const fadeIn = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
 };
 
-function Login2() {
+function Register() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ username: '', password: '', role: 'patient' }); // Default role to 'patient'
+  const [formData, setFormData] = useState({ username: '', password: '', contact:'' }); // Default role to 'patient'
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -291,21 +281,15 @@ function Login2() {
     setIsLoading(true);
     setError('');
 
-    if (!formData.username || !formData.password || !formData.role) {
+    if (!formData.username || !formData.password || !formData.contact) {
       setError('Please fill in all fields');
       setIsLoading(false);
       return;
     }
 
-    const selectedRole = roles.find((r) => r.value === formData.role);
-    if (!selectedRole) {
-      setError('Invalid role selected');
-      setIsLoading(false);
-      return;
-    }
 
     try {
-      const response = await fetch(selectedRole.route, {
+      const response = await fetch(PatientRegisterROute, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -313,6 +297,7 @@ function Login2() {
         body: JSON.stringify({
           username: formData.username,
           password: formData.password,
+          contact:formData.contact
         }),
       });
 
@@ -320,20 +305,9 @@ function Login2() {
         const data = await response.json();
         console.log(data);
         setIsLoading(false);
-        setMessage(`Welcome, ${formData.username}! Redirecting...`);
-        if(formData.role === 'patient' || formData.role === 'doctor'){
-          console.log(data);
-        localStorage.setItem('user', `${data.name[0].name}+${data.name[0].id}+${formData.role}`);
-        }
-        else
-       { localStorage.setItem('user',`${formData.username}+ 0 +${formData.role}`);
-      }
-      setTimeout(() => {
-        if(formData.role!=`doctor`)
-        navigate(`/${formData.role}`);
-      else
-       navigate(`/doctorh`);
-      }, 5000);
+        setMessage(data.message || "sucessful-register");
+        navigate('/login');
+       
         
       } else {
         const data = await response.json();
@@ -380,20 +354,17 @@ function Login2() {
             />
           </InputGroup>
           <InputGroup as={motion.div} variants={fadeIn} initial="hidden" animate="visible">
-            <InputLabel htmlFor="role">Role</InputLabel>
-            <Select
-              id="role"
-              name="role"
-              value={formData.role}
+            <InputLabel htmlFor="contact">ph no</InputLabel>
+            <Input
+              id="contact"
+              name="contact"
+              type='number'
+              value={formData.contact}
               onChange={handleChange}
               required
             >
-              {roles.map((role) => (
-                <option key={role.value} value={role.value}>
-                  {role.label}
-                </option>
-              ))}
-            </Select>
+              </Input>
+             
           </InputGroup>
           <InputGroup as={motion.div} variants={fadeIn} initial="hidden" animate="visible">
             <InputLabel htmlFor="password">Password</InputLabel>
@@ -413,16 +384,13 @@ function Login2() {
             </InputWrapper>
             {error && <ErrorMessage>{error}</ErrorMessage>}
           </InputGroup>
-          <ForgotPassword>
-            <a href="/forgot_password">Forgot Password?</a>
-          </ForgotPassword>
           <SubmitButton
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             type="submit"
             disabled={isLoading}
           >
-            {isLoading ? 'Logging In...' : 'Login'}
+            {isLoading ? 'submitting ...' : 'Register'}
           </SubmitButton>
         </Form>
         {isLoading && (
@@ -436,4 +404,4 @@ function Login2() {
   );
 }
 
-export default Login2;
+export default Register;

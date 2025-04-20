@@ -513,7 +513,7 @@ const Home = () => {
       {/* HEADER */}
       <Header>
         <HeaderContainer>
-          <Logo>CarePlus Hospital</Logo>
+          <Logo>Caretaker</Logo>
           <Nav>
             <NavLink onClick={() => handleNavClick('home')}>
               Home

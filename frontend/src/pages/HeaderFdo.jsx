@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaSignOutAlt,FaHospital,FaFileMedical,FaStethoscope ,FaArrowLeft } from 'react-icons/fa';
+import { FaSignOutAlt,FaHospital,FaFileMedical,FaStethoscope ,FaArrowLeft, FaBed } from 'react-icons/fa';
 import styled from 'styled-components';
 
 // Styled components for Header
@@ -96,7 +96,7 @@ const Header = () => {
     { name: 'Back', icon: <FaArrowLeft />, path: '/' },
     { name: ' made Appointments', icon: <FaStethoscope />, path: '/appointment' },
     { name: 'Discharge', icon: <FaFileMedical />, path: '/fdo/discharge' },
-    { name: 'give room', icon: <FaHospital />, path: '/fdo/allocate' },
+    { name: 'give room', icon: <FaBed />, path: '/fdo/allocate' },
     { name: 'Logout', icon: <FaSignOutAlt />, action: logout },
   ];
 

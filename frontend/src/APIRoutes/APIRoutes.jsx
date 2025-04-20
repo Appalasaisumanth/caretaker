@@ -52,7 +52,7 @@ export const DeleteAppointmentRoute=`${host}/appointment/delete`
 
 export const AvailableRoomRoute=`${host}/room/available`
 export const DischargeRoomRoute=`${host}/room/discharge`
-export const AdmitRoomRoute=`${host}/room/adimt`
+export const AdmitRoomRoute=`${host}/room/admit`
 export const FilledRoomRoute =`${host}/room/filled`
 
 

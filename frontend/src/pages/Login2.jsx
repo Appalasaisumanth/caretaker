@@ -328,7 +328,7 @@ function Login2() {
         else
         localStorage.setItem('user',`${formData.username}+${formData.role}`)
         setTimeout(() => {
-          navigate('/');
+          navigate(`/${formData.role}`);
         }, 5000);
       } else {
         const data = await response.json();

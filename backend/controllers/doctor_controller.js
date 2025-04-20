@@ -1,5 +1,6 @@
 const connection = require('../connection')
 const bcrypt = require('bcrypt');
+const main=require('../mail');
 async function populate_doctors(req, res) {
     try {
         connection.query("SELECT * FROM doctor", (err2, result2) => 
@@ -338,8 +339,9 @@ const name=username;
 
 
 
-function get_doctor_prevappointments(req, res, next) {
+async function get_doctor_prevappointments(req, res, next) {
     const { did } = req.params;
+    
     const uid = did;
     const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' '); // Convert to 'YYYY-MM-DD HH:mm:ss'
     // console.log(currentDateTime);
@@ -383,8 +385,9 @@ function get_doctor_prevappointments(req, res, next) {
 }
 
 
-function get_doctor_upcappointments(req, res, next) {
+async function get_doctor_upcappointments(req, res, next) {
     const { did } = req.params;
+    
     const uid = did;
     const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' '); // 'YYYY-MM-DD HH:mm:ss'
 
@@ -498,4 +501,5 @@ module.exports =
     get_doctor_prevappointments,
     get_doctor_upcappointments,
     get_depts,
+    
 }

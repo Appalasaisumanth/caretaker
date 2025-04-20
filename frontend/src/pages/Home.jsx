@@ -515,6 +515,7 @@ const Home = () => {
             </NavLink>
             <NavLink onClick={() => handleNavClick('doctors')}>Doctors</NavLink>
             <NavLink onClick={() => handleNavClick('contact')} href="#contact">Contact</NavLink>
+            <NavLink  href="/login">Login</NavLink>
             <Button onClick={() => handleNavClick('appointment')}>
               {inrole === 'doctor' ? '' : 'Book Appointment'}
             </Button>

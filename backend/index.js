@@ -11,6 +11,7 @@ const appointment_routes=require('./routes/appointment');
 const test_routes=require('./routes/test');
 const treatment_routes=require('./routes/treatment');
 const app = express();
+const main=require('./mail');
 
 app.use(cors());
 
@@ -18,7 +19,14 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
+  const runWeekly = async () => {
+    await main();
+    console.log('mails sent ');
+    setTimeout(runWeekly, 7 * 24 * 60 * 60 * 1000); 
+  };
+  
+  runWeekly();
   return res.json({ message: "Welcome to caretaker application." });
 });
 const connection = require('./connection');

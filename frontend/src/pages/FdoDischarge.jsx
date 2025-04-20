@@ -210,128 +210,59 @@ const ButtonGroup = styled.div`
 `;
 
 const FdoDischarge = () => {
-    const [doctors, setDoctors] = useState([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedDoctor, setSelectedDoctor] = useState(null);
-    const [formData, setFormData] = useState({
-      id: '',
-      name: '',
-      department: '',
-      qualification: '',
-      experience: 0,
-      role: '',
-    });
-    const modalRef = useRef(null);
- 
+  const [rooms, setRooms] = useState([]);
 
-  const handleUpdate = (doctor) => {
-    setSelectedDoctor(doctor);
-    setFormData({
-     
-    });
-    setIsModalOpen(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-    setSelectedDoctor(null);
-    setFormData({
-      
-      username: '',
-      department: '',
-      qualification: '',
-      experience: 0,
-      role: '',
-    });
-  };
-
-    const handleOk = async (e) => {
-      e.preventDefault();
-      console.log('Updating doctor:', formData);
-     
-      
-    
+  const handleDischarge = async (e, roomId) => {
+    e.preventDefault();
+    if (window.confirm('Are you sure you want to discharge this room?')) {
       try {
-        const response = await fetch(DischargeRoomRoute , {
-          method: 'POST',
-          body:JSON.stringify(formData),
+        const response = await fetch(`${DischargeRoomRoute}/${roomId}`, {
+          method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
           },
         });
-        if (response.ok) 
-        {
-          const data = await response.json();
-          console.log(data);
-          alert(data.message)
 
+        const data = await response.json();
+
+        if (response.ok) {
+          toast.success(data.message || 'Room discharged successfully');
+          setRooms(rooms.filter(room => room.id !== roomId));
         } else {
-          const data = await response.json();
-          alert(data.message);
+          toast.error(data.message || 'Failed to discharge room');
         }
-
-
-
+      } catch (err) {
+        console.error(err);
+        toast.error('Something went wrong. Please try again.');
       }
-      catch (err) 
-      {
-        console.log(err);
-        alert('Something went wrong. Please try again.');
-      }
-    
-      
-      setIsModalOpen(false);
-      setSelectedDoctor(null);
-    };
-
-  
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({
-          ...prev,
-          [name]: name === 'experience' ? parseInt(value) || 0 : value,
-        }));
-      };
-    
-  useEffect(() => {
-    if (isModalOpen && modalRef.current) {
-      modalRef.current.focus();
     }
-  }, [isModalOpen]);
+  };
 
+  // Fetch occupied rooms from API
+  useEffect(() => {
+    const getRooms = async () => {
+      try {
+        const response = await fetch(FilledRoomRoute, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
 
+        const data = await response.json();
 
-
-    // Fetch doctors from API
-    useEffect(() => {
-
-      const get_doctors = async () => {
-        try {
-          const response = await fetch(FilledRoomRoute, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-
-            setDoctors(data.rooms);
-          } else {
-            const data = await response.json();
-            alert(data.message || 'Getting doctors failed');
-          }
-        } catch (err) {
-          console.log(err);
-          alert('Something went wrong. Please try again.');
+        if (response.ok) {
+          setRooms(data.rooms);
+        } else {
+          toast.error(data.message || 'Failed to fetch rooms');
         }
-      };
-      get_doctors();
-    }, [handleOk]);
-
-
+      } catch (err) {
+        console.error(err);
+        toast.error('Something went wrong. Please try again.');
+      }
+    };
+    getRooms();
+  }, [handleDischarge]);
     return (
       <>
         <Header />
@@ -341,27 +272,29 @@ const FdoDischarge = () => {
               <Title>Manage Rooms</Title>
               
             </HeaderSection>
-            {(doctors.length === 0) ? (<div> sorry no doctors's registed</div>) : (<TableWrapper>
+            {(rooms.length === 0) ? (<div> sorry no rooms's registed</div>) : (<TableWrapper>
               <Table>
                 <TableHead>
                   <TableRow>
                     <TableHeader>Room no</TableHeader>
                     <TableHeader>Room details</TableHeader>
                     <TableHeader>patient id</TableHeader>
+                    <TableHeader>start date</TableHeader>
                     <TableHeader>Actions</TableHeader>
                   </TableRow>
                 </TableHead>
                 <tbody>
-                  {doctors.map((doctor) => (
-                    <TableRow key={doctor.id}>
-                      <TableCell>{doctor.id}</TableCell>
-                      <TableCell>{doctor.details}</TableCell>
-                      <TableCell>{doctor.pid}</TableCell>
+                  {rooms.map((room) => (
+                    <TableRow key={room.id}>
+                      <TableCell>{room.id}</TableCell>
+                      <TableCell>{room.details}</TableCell>
+                      <TableCell>{room.pid}</TableCell>
+                      <TableCell>{room.start_time}</TableCell>
                       <TableCell>
                         <ActionButton
                           color="#ed8936"
                           hoverColor="#dd6b20"
-                          onClick={() => handleUpdate(doctor)}
+                          onClick={(e) => handleDischarge(e,room.id)}
                           title="Delete"
                         >
                           <FaHospital />
@@ -374,42 +307,7 @@ const FdoDischarge = () => {
             </TableWrapper>)}
 
 
-            
-          {/* Modal for updating doctor */}
-          {isModalOpen && (
-            <ModalOverlay>
-              <ModalContent tabIndex={-1} ref={modalRef}>
-                <ModalHeader>Update Doctor</ModalHeader>
-                <Form onSubmit={handleOk}>
-                <label for='name'> name</label>
-                  <Input
-                    type="text"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    placeholder="Doctor Name"
-                    disabled
-                  />
-                   <label for='experience'> experience</label>
-                  <Input
-                    type="number"
-                    name="experience"
-                    value={formData.experience}
-                    onChange={handleChange}
-                    placeholder="Experience (years)"
-                    required
-                  />
-                 
-                  <ButtonGroup>
-                    <Button type="button" cancel onClick={handleCancel}>
-                      Cancel
-                    </Button>
-                    <Button type="submit">OK</Button>
-                  </ButtonGroup>
-                </Form>
-              </ModalContent>
-            </ModalOverlay>
-          )}
+        
 
           </ContentContainer>
           <ToastContainer /> {/* Added ToastContainer */}

@@ -176,7 +176,7 @@ async function admit_room(req, res) {
     
 
     try {
-        connection.query("select pid from   room WHERE  pid=?",[pid] ,(err2, result2) => {
+        connection.query("select pid from   room WHERE  pid=? AND end_time IS NULL ",[pid] ,(err2, result2) => {
             if (err2) 
             {
                 console.log("Error fetching data:", err2);

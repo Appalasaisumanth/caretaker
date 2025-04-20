@@ -72,7 +72,7 @@ const NavLink = styled.a`
     color: #e0e0e0;
   }
 
-  @media (max-width: 768px) {
+  @  @media (max-width: 768px) {
     font-size: 1rem;
   }
 `;
@@ -567,6 +567,21 @@ const Doctors = () => {
     }
   };
 
+  // Handle book appointment navigation
+  const handleBookAppointment = (doctor) => {
+    navigate('/appointment', { 
+      state: { 
+        doctor: {
+          id: doctor.id,
+          name: doctor.name,
+          department: doctor.department || 'Dentist',
+          experience: doctor.experience || '5',
+          qualification: doctor.qualification || 'MBBS MD'
+        }
+      }
+    });
+  };
+
   return (
     <Container>
       {/* HEADER */}
@@ -658,7 +673,7 @@ const Doctors = () => {
                     <DoctorDescription>{doctor.qualification || 'MBBS MD'}</DoctorDescription>
                     <PaginationButton
                       style={{ background: '#007bff', color: '#ffffff' }}
-                      onClick={() => navigate('/appointment')}
+                      onClick={() => handleBookAppointment(doctor)}
                     >
                       Book Appointment
                     </PaginationButton>

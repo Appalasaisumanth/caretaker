@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Header from './HeaderDeo';
 import { FaCalendarCheck, FaVial, FaPills } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
   padding: 1rem;
@@ -91,6 +92,30 @@ const CardText = styled.p`
 `;
 
 const DeoHome = () => {
+
+  const [did, setDid] = useState(0);
+  const [inrole, setInrole] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let userData = localStorage.getItem('user');
+    console.log(userData);
+    if(!userData){
+      navigate('/login');
+    }
+    else{
+    const [username, id, role] = userData.split('+');
+    if(role!=`deo`){
+      navigate('/login');
+    }
+    setUser(username);
+    setDid(id || 0);
+    setInrole(role || '');
+  }
+  }, []);
+
+
+
   const [user, setUser] = useState('');
 
   useEffect(() => {

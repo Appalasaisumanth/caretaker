@@ -326,10 +326,8 @@ function Login2() {
         localStorage.setItem('user', `${data.name[0].name}+${data.name[0].id}+${formData.role}`);
         }
         else
-        localStorage.setItem('user',`${formData.username}+${formData.role}`)
-        setTimeout(() => {
-          navigate(`/${formData.role}`);
-        }, 5000);
+        localStorage.setItem('user',`${formData.username}+ 0 +${formData.role}`)
+        
       } else {
         const data = await response.json();
         setError(data.message || 'Login failed');
@@ -339,6 +337,12 @@ function Login2() {
       setError('Something went wrong. Please try again.');
       setIsLoading(false);
     }
+    setTimeout(() => {
+      if(formData.role!=`doctor`)
+      navigate(`/${formData.role}`);
+    else
+     navigate(`/doctorh`);
+    }, 5000);
   };
 
   return (

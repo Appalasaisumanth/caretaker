@@ -318,7 +318,7 @@ const SocialLink = styled.a`
   font-size: 1.5rem;
   transition: color 0.3s;
   &:hover {
-    color: #007bff;
+    color:#007bff;
   }
 `;
 
@@ -347,11 +347,16 @@ const Home = () => {
     let userData = localStorage.getItem('user');
     console.log(userData);
     if(!userData){
+      console.log('Redirecting from here');
       navigate('/login');
     }
     else{
     const [username, id, role] = userData.split('+');
+    console.log(username);
+    console.log(id);
+    console.log(role);
     if(!username){
+      console.log('Rediecting from 2');
       navigate('/login');
     }
     setUser(username);

@@ -341,7 +341,7 @@ const MakeAppointment = () => {
       navigate('/login');
     } else {
       const [username, id, role] = userData.split('+');
-      if (id !== 'fdo') {
+      if (role !== 'fdo') {
         navigate('/login');
       }
       setDid(id || 0);

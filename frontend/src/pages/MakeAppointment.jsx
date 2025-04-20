@@ -5,7 +5,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { GetDoctorsRoute, GetSlotsbyDoctor, BookAppointment } from '../APIRoutes/APIRoutes';
 import { FaCheck, FaTimes } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 // Styled Components
 const Container = styled.div`
@@ -153,7 +153,7 @@ const Select = styled.select`
 
   &:focus {
     border-color: #3b82f6;
-    box-shadow: 0 0 6px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 0 6px rgba(59, 130, 246, 0._gpio);
     outline: none;
     transform: translateY(-1px);
   }
@@ -328,38 +328,30 @@ const NewAppointmentButton = styled.button`
   }
 `;
 
-
 const MakeAppointment = () => {
-
   const [did, setDid] = useState(0);
   const [inrole, setInrole] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+  const selectedDoctor = location.state?.doctor || null;
 
   useEffect(() => {
     let userData = localStorage.getItem('user');
-    console.log(userData);
-    if(!userData){
+    if (!userData) {
       navigate('/login');
+    } else {
+      const [username, id, role] = userData.split('+');
+      if (id !== 'fdo') {
+        navigate('/login');
+      }
+      setDid(id || 0);
+      setInrole(role || '');
     }
-    else{
-    const [username, id, role] = userData.split('+');
-    if(id!=`fdo`){
-      navigate('/login');
-    }
-    setDid(id || 0);
-    setInrole(role || '');
-  }
-  }, []);
-
-
-
-
-
-
+  }, [navigate]);
 
   const [formData, setFormData] = useState({
     pid: '',
-    did: '',
+    did: selectedDoctor?.id || '',
     appointment_date: '',
     appointment_time: '',
     details: '',
@@ -389,6 +381,14 @@ const MakeAppointment = () => {
     };
     fetchDoctors();
   }, []);
+
+  // Prefill doctor details if provided
+  useEffect(() => {
+    if (selectedDoctor) {
+      setFormData(prev => ({ ...prev, did: selectedDoctor.id }));
+      setSearchTerm(selectedDoctor.name);
+    }
+  }, [selectedDoctor]);
 
   // Filter doctors by search term
   useEffect(() => {

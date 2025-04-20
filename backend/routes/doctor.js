@@ -17,7 +17,7 @@ router.get('/:username',get_doctor_by_username);
 router.get('//dept',get_depts);
 router.get('//dept/:department',get_doctor_by_department);
 router.get('/prevappoints/:did',get_doctor_prevappointments);
-router.get('/upcoappoints/:id',get_doctor_upcappointments);
+router.get('/upcoappoints/:did',get_doctor_upcappointments);
 router.post('/populate',populate_doctors);
 
 router.post('/register',register_doctor);

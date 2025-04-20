@@ -338,68 +338,93 @@ const name=username;
 
 
 
-function get_doctor_prevappointments(req,res,next)
-{ const {id}=req.params;
-const uid=id;
-const date=new Date(Date.now());
-    try {
+function get_doctor_prevappointments(req, res, next) {
+    const { did } = req.params;
+    const uid = did;
+    const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' '); // Convert to 'YYYY-MM-DD HH:mm:ss'
+    // console.log(currentDateTime);
+    // console.log(req.params);
 
-        connection.query("SELECT *  FROM doctor d inner join appointment a on a.pid=d.id  where d.id=? AND a.appointment_time<?",[uid,date], async (err2, result2) => {
-            
-            if (err2) 
-                {
-                console.error("Error fetching appointments:", err2);
-                return res.status(500).json({ error: "Failed to fetch doctors" });
-            } 
-            if (result2.length > 0) {
-                return res.status(200).json({ message: "doctor", doctors: result2[0] });
+    try {
+        const query = `
+            SELECT 
+             appointment_date,
+      appointment_time,
+      appointment_details,
+      remarks,
+      d.name AS dname,
+      p.name AS pname,
+      d.qualification,
+      d.experience,
+      d.department,aid,pid,did  
+            FROM doctor d 
+            INNER JOIN appointment a ON a.did = d.id  
+            INNER JOIN patient p ON a.pid=p.id
+            WHERE d.id = ? 
+            AND STR_TO_DATE(CONCAT(a.appointment_date, ' ', a.appointment_time), '%Y-%m-%d %H:%i:%s') < ?
+        `;
+
+        connection.query(query, [uid, currentDateTime], (err, result) => {
+            if (err) {
+                console.error("Error fetching appointments:", err);
+                return res.status(500).json({ error: "Failed to fetch previous appointments" });
             }
-            else
-            {
-                return res.status(200).json({ message: "this usernmaed doctor does not exist" });
+
+            if (result.length > 0) {
+                return res.status(200).json({ message: "Previous appointments fetched", appointments: result });
+            } else {
+                return res.status(200).json({ message: "No previous appointments found for this doctor" });
             }
         });
+    } catch (err) {
+        console.error("Internal server error:", err);
+        return res.status(500).json({ message: 'Internal server error, try again later' });
     }
-        catch(err)
-        {
-            console.log(err);
-            return res.status(500).json({message:'internal server error,try next time'})
-        }
 }
 
-function get_doctor_upcappointments(req,res,next)
-{ const {id}=req.params;
-console.log(id);
-const uid=id;
-const date=new Date(Date.now());
-console.log(date);
+
+function get_doctor_upcappointments(req, res, next) {
+    const { did } = req.params;
+    const uid = did;
+    const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' '); // 'YYYY-MM-DD HH:mm:ss'
+
     try {
+        const query = `
+            SELECT 
+             appointment_date,
+      appointment_time,
+      appointment_details,
+      remarks,
+      d.name AS dname,
+      p.name AS pname,
+      d.qualification,
+      d.experience,
+      d.department,aid ,pid,did    
+            FROM doctor  d
+            INNER JOIN appointment  a ON a.did = d.id  
+            inner join patient p on a.pid = p.id 
+            WHERE d.id = ? 
+            AND STR_TO_DATE(CONCAT(a.appointment_date, ' ', a.appointment_time), '%Y-%m-%d %H:%i:%s') > ?
+        `;
 
-
-        // connection.query("SELECT *  FROM doctor d INNER JOIN appointment a ON a.pid = d.id  WHERE d.id = ? AND CONCAT(a.appointment_date, ' ', a.appointment_time) > ?",[uid,date], async (err2, result2) => {
-        connection.query("SELECT *  FROM doctor d INNER JOIN appointment a ON a.pid = d.id  WHERE d.id = ?",[uid], async (err2, result2) => {
-            console.log(result2);
-            if (err2) 
-                {
-                console.error("Error fetching appointments:", err2);
-                return res.status(500).json({ error: "Failed to fetch doctors" });
-            } 
-            if (result2.length > 0) {
-                
-                return res.status(200).json({ message: "doctor", doctors: result2 });
+        connection.query(query, [uid, currentDateTime], (err, result) => {
+            if (err) {
+                console.error("Error fetching appointments:", err);
+                return res.status(500).json({ error: "Failed to fetch upcoming appointments" });
             }
-            else
-            {
-                return res.status(200).json({ message: "this usernmaed doctor does not have appointments" });
+            console.log(result);
+            if (result.length > 0) {
+                return res.status(200).json({ message: "Upcoming appointments fetched", appointments: result });
+            } else {
+                return res.status(200).json({ message: "No upcoming appointments found for this doctor" });
             }
         });
+    } catch (err) {
+        console.error("Internal server error:", err);
+        return res.status(500).json({ message: 'Internal server error, try again later' });
     }
-        catch(err)
-        {
-            console.log(err);
-            return res.status(500).json({message:'internal server error,try next time'})
-        }
 }
+
 
 
 

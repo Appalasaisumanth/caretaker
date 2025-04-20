@@ -17,7 +17,7 @@ import DeoTreatments from './pages/DeoTreatments';
 import FdoAllocate from './pages/FdoAllocate';
 import FdoDischarge from './pages/FdoDischarge';
 import DoctorHome from './pages/DoctorHome';
-import DoctorPrevAppointments from './pages/PatientHome';
+import DoctorPrevAppointments from './pages/DoctorPrevAppointments';
 import DoctorUpcAppointments from './pages/DoctorUpcomAppointments';
 
 function App() {

@@ -34,6 +34,7 @@ const HeaderContainer = styled.div`
   @media (max-width: 768px) {
     flex-direction: column;
     gap: 1rem;
+    padding: 0 15px;
   }
 `;
 
@@ -42,6 +43,10 @@ const Logo = styled.h4`
   font-size: 1.8rem;
   font-weight: 700;
   letter-spacing: 1px;
+
+  @media (max-width: 768px) {
+    font-size: 1.6rem;
+  }
 `;
 
 const Nav = styled.nav`
@@ -50,8 +55,10 @@ const Nav = styled.nav`
   gap: 2rem;
 
   @media (max-width: 768px) {
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 0.75rem;
+    justify-content: center;
   }
 `;
 
@@ -63,6 +70,10 @@ const NavLink = styled.a`
   transition: color 0.3s;
   &:hover {
     color: #e0e0e0;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
   }
 `;
 
@@ -78,6 +89,11 @@ const Button = styled.a`
   &:hover {
     background: #f0f0f0;
     transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.5rem 1.2rem;
+    font-size: 0.9rem;
   }
 `;
 
@@ -100,23 +116,32 @@ const ClearFiltersButton = styled.button`
     background: #005bb5;
     transform: translateY(-2px);
   }
+
+  @media (max-width: 768px) {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
 `;
 
 const Section = styled.section`
   padding: 5rem 0;
   background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+
+  @media (max-width: 768px) {
+    padding: 3rem 0;
+  }
 `;
 
 const SectionContainer = styled.div`
   max-width: 1200px;
   padding: 0 5px 0 0;
   display: flex;
-  margin-left: ${props => (props.showFilters ? '400px' : '0')}; /* Offset for fixed sidebar */
+  margin-left: ${props => (props.showFilters ? '250px' : '0')};
 
   @media (max-width: 768px) {
     flex-direction: column;
-    padding: 0 20px;
-    margin-left: 0; /* No offset on mobile */
+    padding: 0 15px;
+    margin-left: 0;
   }
 `;
 
@@ -132,15 +157,17 @@ const FilterSidebar = styled(motion.div)`
   padding: 1.5rem;
   border-radius: 0 10px 10px 0;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-left: 0;
   margin-top: 6rem;
 
   @media (max-width: 768px) {
     width: 100%;
     height: auto;
-    position: static;
-    border-radius: 10px;
-    margin-top: 0;
+    position: fixed;
+    top: 4.5rem;
+    border-radius: 0;
+    padding: 1rem;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -153,6 +180,10 @@ const FilterTitle = styled.h3`
   color: #005bb5;
   font-weight: 600;
   margin-bottom: 0.75rem;
+
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+  }
 `;
 
 const CheckboxLabel = styled.label`
@@ -162,6 +193,10 @@ const CheckboxLabel = styled.label`
   color: #333;
   margin-bottom: 0.5rem;
   cursor: pointer;
+
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+  }
 `;
 
 const Checkbox = styled.input`
@@ -173,6 +208,10 @@ const SearchBarContainer = styled.div`
   margin-bottom: 1.5rem;
   display: flex;
   justify-content: center;
+
+  @media (max-width: 768px) {
+    padding: 0 10px;
+  }
 `;
 
 const SearchInput = styled.input`
@@ -195,6 +234,12 @@ const SearchInput = styled.input`
   &::placeholder {
     color: #999;
   }
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    font-size: 0.9rem;
+    padding: 0.5rem 0.8rem;
+  }
 `;
 
 const DoctorsFlex = styled.div`
@@ -203,7 +248,12 @@ const DoctorsFlex = styled.div`
   flex-wrap: wrap;
   gap: 3rem;
   justify-content: flex-start;
-  height: 400px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 0 10px;
+  }
 `;
 
 const DoctorCard = styled(motion.div)`
@@ -213,9 +263,18 @@ const DoctorCard = styled(motion.div)`
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
   padding: 1.2rem;
   transition: transform 0.3s ease;
+  flex: 1;
+  min-width: 260px;
+  max-width: 300px;
 
   &:hover {
     transform: translateY(-8px);
+  }
+
+  @media (max-width: 768px) {
+    min-width: 100%;
+    max-width: 100%;
+    padding: 1rem;
   }
 `;
 
@@ -225,6 +284,11 @@ const DoctorImage = styled.img`
   border-radius: 50%;
   margin: 0 auto 1rem;
   object-fit: cover;
+
+  @media (max-width: 768px) {
+    width: 80px;
+    height: 80px;
+  }
 `;
 
 const DoctorName = styled.h5`
@@ -232,6 +296,10 @@ const DoctorName = styled.h5`
   color: #333;
   font-weight: 600;
   margin-bottom: 0.3rem;
+
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+  }
 `;
 
 const DoctorSpecialty = styled.p`
@@ -239,19 +307,31 @@ const DoctorSpecialty = styled.p`
   font-size: 1.1rem;
   font-weight: 500;
   margin-bottom: 0.3rem;
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
 `;
 
 const DoctorExperience = styled.p`
   font-size: 1rem;
   color: #666;
   margin-bottom: 0.3rem;
+
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+  }
 `;
 
 const DoctorDescription = styled.p`
   font-size: 1rem;
   color: #666;
   line-height: 1.5;
-  margin-bottom: 0;
+  margin-bottom: 0.5rem;
+
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+  }
 `;
 
 const NoDoctorsMessage = styled.p`
@@ -260,6 +340,10 @@ const NoDoctorsMessage = styled.p`
   color: #666;
   margin-top: 2rem;
   width: 100%;
+
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+  }
 `;
 
 const PaginationContainer = styled.div`
@@ -268,6 +352,12 @@ const PaginationContainer = styled.div`
   align-items: center;
   gap: 1rem;
   margin-top: 2rem;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+    padding: 0 10px;
+  }
 `;
 
 const PaginationButton = styled.button`
@@ -285,6 +375,11 @@ const PaginationButton = styled.button`
     background: #007bff;
     color: #fff;
   }
+
+  @media (max-width: 768px) {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
 `;
 
 const SectionTitle = styled(motion.h2)`
@@ -294,6 +389,11 @@ const SectionTitle = styled(motion.h2)`
   font-weight: 600;
   margin-bottom: 3rem;
   height: 10px;
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
 `;
 
 const FilterToggleButton = styled.button`
@@ -317,7 +417,7 @@ const FilterToggleButton = styled.button`
   }
 
   @media (min-width: 769px) {
-    display: none; /* Hide on desktop */
+    display: none;
   }
 `;
 
@@ -349,7 +449,7 @@ const Doctors = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [showFilters, setShowFilters] = useState(true);
-  const naviage=useNavigate();
+  const navigate = useNavigate();
 
   // Adjust doctors per page based on filter visibility
   const doctorsPerPage = showFilters ? 3 : 4;
@@ -556,7 +656,12 @@ const Doctors = () => {
                       {doctor.experience || '5'} Years Experience
                     </DoctorExperience>
                     <DoctorDescription>{doctor.qualification || 'MBBS MD'}</DoctorDescription>
-                    <PaginationButton style={{ background:' #007bff'}} onClick={()=>{naviage('/appointment')}}> Book appointment </PaginationButton>
+                    <PaginationButton
+                      style={{ background: '#007bff', color: '#ffffff' }}
+                      onClick={() => navigate('/appointment')}
+                    >
+                      Book Appointment
+                    </PaginationButton>
                   </DoctorCard>
                 ))
               ) : (

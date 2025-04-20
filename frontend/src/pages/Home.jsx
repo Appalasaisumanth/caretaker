@@ -1,10 +1,12 @@
-import {React,useEffect,useState} from 'react';
+import { React, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import img3 from '../images/imgg3.jpg';
-import imgappoint from '../images/imageappoint.jpg'
+import { useNavigate } from 'react-router-dom';
+import imgappoint from '../images/imageappoint.jpg';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { GetDoctorsRoute } from '../APIRoutes/APIRoutes';
+
 // Sample data for dynamic sections
 const services = [
   { icon: 'fas fa-stethoscope', title: 'General Medicine', description: 'Comprehensive care for all ages with a focus on prevention and treatment.' },
@@ -68,6 +70,7 @@ const NavLink = styled.a`
   font-size: 1.1rem;
   font-weight: 500;
   transition: color 0.3s;
+  cursor: pointer;
   &:hover {
     color: #e0e0e0;
   }
@@ -82,6 +85,7 @@ const Button = styled.a`
   font-size: 1rem;
   font-weight: 600;
   transition: all 0.3s ease;
+  cursor: pointer;
   &:hover {
     background: #f0f0f0;
     transform: translateY(-2px);
@@ -91,11 +95,12 @@ const Button = styled.a`
 const Section = styled.section`
   padding: 5rem 0;
   height: auto;
-  background: ${props => props.bg || 'white'};
+  background: ${(props) => props.bg || 'white'};
 `;
-const Contactsection =styled.section`
+
+const Contactsection = styled.section`
   padding: 5rem 0;
-  background: ${props => props.bg || 'white'};
+  background: ${(props) => props.bg || 'white'};
 `;
 
 const SectionContainer = styled.div`
@@ -244,9 +249,9 @@ const DoctorDescription = styled.p`
 const CenteredButton = styled(Button)`
   display: block;
   padding: auto;
-  margin: 0.75rem auto ;
-  width:8.5rem;
-  text-align:center;
+  margin: 0.75rem auto;
+  width: 8.5rem;
+  text-align: center;
 `;
 
 const AppointmentRow = styled(HeroRow)`
@@ -332,35 +337,171 @@ const stagger = {
 };
 
 const Home = () => {
-  const  [doctors,setDoctors]=useState([]);
-  useEffect( ()=> {
-    const get_doctors=async ()=>{
-    try {
-      const response = await fetch(GetDoctorsRoute, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+  const [user, setUser] = useState('');
+  const [did, setDid] = useState(0);
+  const [inrole, setInrole] = useState('');
+  const navigate = useNavigate();
+  const [doctors, setDoctors] = useState([]);
 
-      if (response.ok) {
-        const data = await response.json();
-       setDoctors(data.doctors)
-      } else {
-        const data = await response.json();
-        alert(data.message || 'getting doctors failed');
-       
-      }
-    } catch (err) {
-      console.log(err);
-      alert('Something went wrong. Please try again.');
-     
+  useEffect(() => {
+    let userData = localStorage.getItem('user');
+    console.log(userData);
+    if(!userData){
+      navigate('/login');
     }
+    else{
+    const [username, id, role] = userData.split('+');
+    if(!username){
+      navigate('/login');
+    }
+    setUser(username);
+    setDid(id || 0);
+    setInrole(role || '');
   }
-  get_doctors();
-}
-  
-  ,[])
+  }, []);
+
+  useEffect(() => {
+    const get_doctors = async () => {
+      try {
+        const response = await fetch(GetDoctorsRoute, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setDoctors(data.doctors);
+        } else {
+          const data = await response.json();
+          alert(data.message || 'getting doctors failed');
+        }
+      } catch (err) {
+        console.log(err);
+        alert('Something went wrong. Please try again.');
+      }
+    };
+    get_doctors();
+  }, []);
+
+
+
+  const handleLogout = ()=>{
+    localStorage.removeItem('user')
+    navigate('/login');
+  }
+
+  // Role-based navigation handler
+  const handleNavClick = (destination) => {
+    switch (inrole) {
+      case 'doctor':
+        switch (destination) {
+          case 'home':
+            navigate('/doctorh');
+            break;
+          case 'login':
+            navigate('/logout');
+            break;
+          case 'doctors':
+            navigate('/doctors');
+            break;
+          case 'contact':
+            // Anchor link, no navigation needed
+            break;
+          case 'appointment':
+            navigate('/appointments');
+            break;
+          default:
+            navigate('/doctor-dashboard');
+        }
+        break;
+      case 'patient':
+        switch (destination) {
+          case 'home':
+            navigate('/patient');
+            break;
+          case 'login':
+            navigate('/logout');
+            break;
+          case 'doctors':
+            navigate('/doctors');
+            break;
+          case 'contact':
+            // Anchor link, no navigation needed
+            break;
+          case 'appointment':
+            navigate('/appointment');
+            break;
+        }
+        break;
+
+        case 'fdo':
+        switch (destination) {
+          case 'home':
+            navigate('/fdo');
+            break;
+          case 'login':
+            navigate('/logout');
+            break;
+          case 'doctors':
+            navigate('/doctors');
+            break;
+          case 'contact':
+            // Anchor link, no navigation needed
+            break;
+          case 'appointment':
+            navigate('/appointment');
+            break;
+        }
+        break;
+
+
+
+        case 'deo':
+        switch (destination) {
+          case 'home':
+            navigate('/deo');
+            break;
+          case 'login':
+            navigate('/logout');
+            break;
+          case 'doctors':
+            navigate('/doctors');
+            break;
+          case 'contact':
+            // Anchor link, no navigation needed
+            break;
+          case 'appointment':
+            navigate('/appointment');
+            break;
+        }
+        break;
+
+
+
+      default: // Guest or other roles
+        switch (destination) {
+          case 'home':
+            navigate('/');
+            break;
+          case 'login':
+            navigate('/login');
+            break;
+          case 'doctors':
+            navigate('/doctors');
+            break;
+          case 'contact':
+            // Anchor link, no navigation needed
+            break;
+          case 'appointment':
+            navigate('/login');
+            break;
+          default:
+            navigate('/');
+        }
+    }
+  };
 
   return (
     <Container>
@@ -369,11 +510,15 @@ const Home = () => {
         <HeaderContainer>
           <Logo>CarePlus Hospital</Logo>
           <Nav>
-            <NavLink href="/">Home</NavLink>
-            <NavLink href="/login">Login</NavLink>
-            <NavLink href="/doctors">Doctors</NavLink>
-            <NavLink href="#contact">Contact</NavLink>
-            <Button href="/appointment">Book Appointment</Button>
+            <NavLink onClick={() => handleNavClick('home')}>
+              Home
+            </NavLink>
+            <NavLink onClick={() => handleNavClick('doctors')}>Doctors</NavLink>
+            <NavLink onClick={() => handleNavClick('contact')} href="#contact">Contact</NavLink>
+            <Button onClick={() => handleNavClick('appointment')}>
+              {inrole === 'doctor' ? '' : 'Book Appointment'}
+            </Button>
+            <Button onClick={()=>handleLogout()}>Logout</Button>
           </Nav>
         </HeaderContainer>
       </Header>
@@ -382,11 +527,7 @@ const Home = () => {
       <Section id="hero" bg="linear-gradient(135deg, #f8f9fa, #e9ecef)">
         <SectionContainer>
           <HeroRow>
-            <HeroText
-              initial="hidden"
-              animate="visible"
-              variants={fadeIn}
-            >
+            <HeroText initial="hidden" animate="visible" variants={fadeIn}>
               <HeroTitle>Your Health, Our Priority</HeroTitle>
               <HeroDescription>
                 Providing compassionate and advanced medical care to keep you and your loved ones healthy.
@@ -407,24 +548,12 @@ const Home = () => {
       {/* SERVICES SECTION */}
       <Section id="services">
         <SectionContainer>
-          <SectionTitle
-            initial="hidden"
-            animate="visible"
-            variants={fadeIn}
-          >
+          <SectionTitle initial="hidden" animate="visible" variants={fadeIn}>
             Our Services
           </SectionTitle>
-          <ServicesGrid
-            as={motion.div}
-            initial="hidden"
-            animate="visible"
-            variants={stagger}
-          >
+          <ServicesGrid as={motion.div} initial="hidden" animate="visible" variants={stagger}>
             {services.map((service, index) => (
-              <ServiceCard
-                key={index}
-                variants={fadeIn}
-              >
+              <ServiceCard key={index} variants={fadeIn}>
                 <ServiceIcon className={service.icon} />
                 <ServiceTitle>{service.title}</ServiceTitle>
                 <ServiceDescription>{service.description}</ServiceDescription>
@@ -437,29 +566,19 @@ const Home = () => {
       {/* DOCTORS SECTION */}
       <Section id="doctors" bg="linear-gradient(135deg, #f8f9fa, #e9ecef)">
         <SectionContainer>
-          <SectionTitle
-            initial="hidden"
-            animate="visible"
-            variants={fadeIn}
-          >
+          <SectionTitle initial="hidden" animate="visible" variants={fadeIn}>
             Meet Our Doctors
           </SectionTitle>
-          <DoctorsGrid
-            as={motion.div}
-            initial="hidden"
-            animate="visible"
-            variants={stagger}
-          >
+          <DoctorsGrid as={motion.div} initial="hidden" animate="visible" variants={stagger}>
             {doctors.slice(0, 3).map((doctor, index) => (
-              <DoctorCard
-                key={index }
-                variants={fadeIn}
-              >
-                <DoctorImage src="https://as1.ftcdn.net/v2/jpg/06/48/69/42/1000_F_648694278_haC94bdL26EedqLMIbMpLACqzxwuvq4f.webp" alt="Doctor" />
+              <DoctorCard key={index} variants={fadeIn}>
+                <DoctorImage
+                  src="https://as1.ftcdn.net/v2/jpg/06/48/69/42/1000_F_648694278_haC94bdL26EedqLMIbMpLACqzxwuvq4f.webp"
+                  alt="Doctor"
+                />
                 <DoctorName>{doctor.name}</DoctorName>
-                <DoctorSpecialty>{doctor.department || "Dentist"}</DoctorSpecialty>
-                <DoctorDescription>{doctor.qualification || "MBBS MD"}</DoctorDescription>
-
+                <DoctorSpecialty>{doctor.department || 'Dentist'}</DoctorSpecialty>
+                <DoctorDescription>{doctor.qualification || 'MBBS MD'}</DoctorDescription>
               </DoctorCard>
             ))}
           </DoctorsGrid>
@@ -471,19 +590,15 @@ const Home = () => {
       <Section id="appointment">
         <SectionContainer>
           <AppointmentRow>
-            <HeroText
-              initial="hidden"
-              animate="visible"
-              variants={fadeIn}
-            >
+            <HeroText initial="hidden" animate="visible" variants={fadeIn}>
               <HeroTitle>Book an Appointment</HeroTitle>
               <HeroDescription>
-                Schedule a visit with our specialists at your convenience. We re here to provide the care you need, when you need it.
+                Schedule a visit with our specialists at your convenience. We’re here to provide the care you need, when you need it.
               </HeroDescription>
               <Button href="/appointment">Make Appointment</Button>
             </HeroText>
             <HeroImage
-              src= {imgappoint}
+              src={imgappoint}
               alt="Appointment"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -496,19 +611,10 @@ const Home = () => {
       {/* CONTACT SECTION */}
       <Contactsection id="contact" bg="linear-gradient(135deg, #007bff, #005bb5)">
         <SectionContainer>
-          <SectionTitle
-            initial="hidden"
-            animate="visible"
-            variants={fadeIn}
-            style={{ color: 'white' }}
-          >
+          <SectionTitle initial="hidden" animate="visible" variants={fadeIn} style={{ color: 'white' }}>
             Get in Touch
           </SectionTitle>
-          <ContactGrid
-            initial="hidden"
-            animate="visible"
-            variants={stagger}
-          >
+          <ContactGrid initial="hidden" animate="visible" variants={stagger}>
             <ContactItem as={motion.div} variants={fadeIn}>
               <ContactIcon className="fas fa-map-marker-alt" />
               <ContactText>123 Health St, Wellness City, 12345</ContactText>
@@ -530,9 +636,15 @@ const Home = () => {
         <FooterContainer>
           <FooterText>© 2025 CarePlus Hospital. All Rights Reserved.</FooterText>
           <SocialLinks>
-            <SocialLink href="#"><i className="fab fa-facebook-f"></i></SocialLink>
-            <SocialLink href="#"><i className="fab fa-twitter"></i></SocialLink>
-            <SocialLink href="#"><i className="fab fa-linkedin-in"></i></SocialLink>
+            <SocialLink href="#">
+              <i className="fab fa-facebook-f"></i>
+            </SocialLink>
+            <SocialLink href="#">
+              <i className="fab fa-twitter"></i>
+            </SocialLink>
+            <SocialLink href="#">
+              <i className="fab fa-linkedin-in"></i>
+            </SocialLink>
           </SocialLinks>
         </FooterContainer>
       </Footer>

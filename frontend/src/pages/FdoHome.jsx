@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Header from './HeaderFdo';
+import { useNavigate } from 'react-router-dom';
 import { FaStethoscope, FaFileMedical, FaHospital } from 'react-icons/fa'; // Updated icons
 import { Link } from 'react-router-dom';
 
@@ -92,6 +93,31 @@ const CardText = styled.p`
 `;
 
 const FdoHome = () => {
+
+  const [did, setDid] = useState(0);
+  const [inrole, setInrole] = useState('');
+  const navigate = useNavigate();
+  const [doctors, setDoctors] = useState([]);
+
+  useEffect(() => {
+    let userData = localStorage.getItem('user');
+    console.log(userData);
+    if(!userData){
+      navigate('/login');
+    }
+    else{
+    const [username, id, role] = userData.split('+');
+    if(id!=`fdo`){
+      navigate('/login');
+    }
+    setUser(username);
+    setDid(id || 0);
+    setInrole(role || '');
+  }
+  }, []);
+
+
+
   const [user, setUser] = useState('');
 
   useEffect(() => {

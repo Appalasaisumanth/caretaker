@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Header from './HeaderDoctor';
+import { useNavigate } from 'react-router-dom';
 import { FaStethoscope, FaFileMedical, FaHospital } from 'react-icons/fa'; // Updated icons
 import { Link } from 'react-router-dom';
 
@@ -93,11 +94,23 @@ const CardText = styled.p`
 
 const DoctorHome = () => {
   const [user, setUser] = useState('');
+  const [did, setDid] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    let user = localStorage.getItem('user') || 'Fdo';
-    setUser(user.split('+')[0]);
-    console.log(user);
+    let userData = localStorage.getItem('user');
+    if(!userData){
+      navigate('/login');
+    }
+    else{
+    const [username, id, role] = userData.split('+');
+    console.log(userData);
+    if(role!='doctor'){
+      navigate('/login');
+    }
+    setUser(username);
+    setDid(parseInt(id) || 0);
+  }
   }, []);
 
   return (

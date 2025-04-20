@@ -93,7 +93,7 @@ function get_appointment(req,res,next)
       patient.name AS pname,
       doctor.qualification,
       doctor.experience,
-      doctor.department,appointment.aid
+      doctor.department,appointment.aid,pid,did  
    FROM appointment
    INNER JOIN doctor ON doctor.id = appointment.did
    INNER JOIN patient ON patient.id = appointment.pid
@@ -270,12 +270,12 @@ function update_appointment(req,res,next)
         
         if(remarks)
         {
-            filters.append(`remarks=${remarks}`);
+            filters.push(`remarks='${remarks}'`);
 
         }
         if (details)
         {
-            filters.append(`details=${details}`);
+            filters.push(`appointment_details='${details}'`);
         }
     connection.query("SELECT *   from appointment where aid=? ",[aid],(err,result)=>{
         if(err)
@@ -289,7 +289,7 @@ function update_appointment(req,res,next)
             {return res.status(200).json({message:'this slot is not booked cannot be updated',});}
             else
             {
-                connection.query(`update appointment set  did=? , pid=? , appointment_time=?, appointment_date=?,  ${filters && filters.length ? ',' + filters.filter(f => f != null && f.trim() !== '').join(',') : ''} where aid=?;`,[did,pid,appointment_time,appointment_date,aid],(err,result)=>
+                connection.query(`update appointment set  did=? , pid=? , appointment_time=?, appointment_date=?  ${filters && filters.length ? ',' + filters.filter(f => f != null && f.trim() !== '').join(',') : ''} where aid=?;`,[did,pid,appointment_time,appointment_date,aid],(err,result)=>
                 {
                     if(err)
                         {

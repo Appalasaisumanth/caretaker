@@ -5,6 +5,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { GetDoctorsRoute, GetSlotsbyDoctor, BookAppointment } from '../APIRoutes/APIRoutes';
 import { FaCheck, FaTimes } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 // Styled Components
 const Container = styled.div`
@@ -327,7 +328,35 @@ const NewAppointmentButton = styled.button`
   }
 `;
 
+
 const MakeAppointment = () => {
+
+  const [did, setDid] = useState(0);
+  const [inrole, setInrole] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let userData = localStorage.getItem('user');
+    console.log(userData);
+    if(!userData){
+      navigate('/login');
+    }
+    else{
+    const [username, id, role] = userData.split('+');
+    if(id!=`fdo`){
+      navigate('/login');
+    }
+    setDid(id || 0);
+    setInrole(role || '');
+  }
+  }, []);
+
+
+
+
+
+
+
   const [formData, setFormData] = useState({
     pid: '',
     did: '',

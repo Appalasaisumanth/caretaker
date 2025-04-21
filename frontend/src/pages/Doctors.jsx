@@ -126,7 +126,7 @@ const ClearFiltersButton = styled.button`
 const Section = styled.section`
   padding: 5rem 0;
   background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-
+  margin-left: 4rem;
   @media (max-width: 768px) {
     padding: 3rem 0;
   }
@@ -134,6 +134,7 @@ const Section = styled.section`
 
 const SectionContainer = styled.div`
   max-width: 1200px;
+  
   padding: 0 5px 0 0;
   display: flex;
   margin-left: ${props => (props.showFilters ? '250px' : '0')};
@@ -587,7 +588,7 @@ const Doctors = () => {
       {/* HEADER */}
       <Header>
         <HeaderContainer>
-          <Logo>CarePlus Hospital</Logo>
+          <Logo>Caretaker</Logo>
           <Nav>
             <NavLink href="#home">Home</NavLink>
             <NavLink href="#services">Services</NavLink>

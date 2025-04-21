@@ -1,4 +1,4 @@
-export const host="http://localhost:5000";
+export const host="http://10.10.34.236:5000";
 
 
 export const AdminloginRoute = `${host}/admin/login`

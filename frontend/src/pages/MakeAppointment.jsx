@@ -507,7 +507,7 @@ const MakeAppointment = () => {
     <Container>
       <Header>
         <HeaderContainer>
-          <Logo>CarePlus Hospital</Logo>
+          <Logo>Caretaker</Logo>
           <Nav>
             <NavLink href="#home">Home</NavLink>
             <NavLink href="#services">Services</NavLink>
